@@ -12,13 +12,14 @@ include 'signupController.php';
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body class="bg-light">
+<body class="bg-primary">
 
   <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-7">
-          <h1 class="text-center text-dark mt-3 mb-4">Create an Account</h1>
+          <h1 class="text-center text-white mt-3 mb-4">Create an Account</h1>
           <?php if (count($errors) > 0): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?php foreach($errors as $error): ?> 
@@ -45,21 +46,8 @@ include 'signupController.php';
 
           <div class="card w-100 trans shadow">
             <form method="POST" id="signup_form" action="signup.php">
-              <div class=" form-group mt-4 mr-4 ml-4">
-                <button type="submit" class="btn btn-primary w-100" name="facebook"><i class="fa fa-facebook-f mr-3"></i>Continue with Facebook</button>
-              </div>
-              <div class=" form-group mt-2 mr-4 ml-4">
-               <button type="submit" class="btn btn-outline-danger w-100" name="google"><i class="fa fa-google mr-3"></i>Continue with Google</button>
-              </div>
-              <div class=" form-group mt-2 mr-4 ml-4">
-                <button type="submit" class="btn btn-outline-info w-100" name="twitter"><i class="fa fa-twitter mr-3"></i>Continue with Twitter</button>
-              </div>
-              <br>
-              <div class=" form-group mr-4 ml-4">
-                <h4><span class="mt-5">OR</span></h4>
-              </div>
-
-              <div class="form-row mb-3 mt-4 mr-2 ml-2">
+             
+              <div class="form-row mb-3 mt-3 mr-2 ml-2">
                 <div class="col">
                   <label for="full_name">Username</label>
                  <input type="text" class="form-control" name="username" value="<?= $username ?? '' ?>" required="">
@@ -71,7 +59,7 @@ include 'signupController.php';
                 </div>
               </div>
 
-              <div class="form-row mb-3 mt-4 mr-2 ml-2">
+              <div class="form-row mb-3 mt-3 mr-2 ml-2">
                 <div class="col">
                   <label for="full_name">First Name</label>
                  <input type="text" class="form-control" name="firstname" value="<?= $firstname ?? '' ?>" required="">
@@ -107,10 +95,17 @@ include 'signupController.php';
                 </div>
           </div>
 
+          <div class="form-row mb-3 mt-2 mr-2 ml-2">
+                <div class="col">
+
+                  <div class="g-recaptcha w-100" data-sitekey="6LdTmk4cAAAAABdAY63Ks679Amk_TsqvCZkf5N3_"></div>
+                </div>
+          </div>
+
             <div class="form-row mb-3 mt-4 mr-2 ml-2">
                 <div class="col">
 
-                 <input type="submit" class="btn btn-outline-success login w-100 mt-2 mb-3" id="signup_button" name="register" value="Sign up">
+                 <input type="submit" class="btn btn-outline-primary login w-100 mt-2 mb-3" id="signup_button" name="register" value="Sign up">
                 </div>
           </div>
 

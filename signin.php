@@ -1,4 +1,5 @@
-<?php 
+<?php
+session_start();
 include 'loginController.php';
 ?>
 
@@ -13,12 +14,12 @@ include 'loginController.php';
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body class="bg-light">
+<body class="bg-primary">
 
   <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-5">
-          <h1 class="text-center text-dark mt-3 mb-4">Sign in to Account</h1>
+          <h1 class="text-center text-white mt-3 mb-4">Sign in to Account</h1>
 
            <?php if (count($errors) > 0): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -32,29 +33,8 @@ include 'loginController.php';
               </div>
               <?php endif; ?>
           <div class="w-100 shadow trans card">
-          <div class=" form-group mt-4 mr-4 ml-4 mt-3">
-            <button type="submit" class="btn btn-primary w-100" name="facebook"><i class="fa fa-facebook-f mr-3"></i>Continue with Facebook</button>
-          </div>
-          
-          <?php 
-              if($login_with_google_button !== '')
-              {
-              echo '<div class="form-group mt-2 mr-4 ml-4">'.$login_with_google_button . '</div>';
-              }
-          ?>
-             
-          <div class=" form-group mt-2 mr-4 ml-4">
-            <button type="submit" class="btn btn-outline-info w-100" name="twitter"><i class="fa fa-twitter mr-3"></i>Continue with Twitter</button>
-          </div>
-          
+                    
             <form method="POST" action="signin.php" autocomplete="off">
-
-                
-              <br>
-              <div class=" form-group mr-4 ml-4">
-                <h4><span class="mt-5">OR</span></h4>
-              </div>
-              
 
               <div class=" form-group mt-4 mr-4 ml-4">
                 <label for="Username">Username</label>
@@ -77,7 +57,7 @@ include 'loginController.php';
               </div>
 
               <div class="form-group mr-4 ml-4">
-                <input type="submit" class="btn btn-outline-success login w-100 mt-2 mb-3" name="submit" value="Sign in">
+                <input type="submit" class="btn btn-outline-primary login w-100 mt-2 mb-3" name="submit" value="Sign in">
               </div>
             </form>
           </div>

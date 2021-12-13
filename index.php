@@ -1,24 +1,18 @@
 
 <?php
-    
     session_start();
-    if(!isset($_SESSION['user_first_name'])) {
+
+    if(!isset($_SESSION['email'])) {
         header("Location: signin.php");
     }
     else{
-      
+     
       //session variables for default login
     $id = $_SESSION['user'];
     $user = $_SESSION['username'];
     $lastname = $_SESSION['lastname'];
     $firstname = $_SESSION['firstname'];
-    $email = $_SESSION['email'];
-
-    //session variables for google
-    $google_email = $_SESSION['user_email_address'];
-    $google_img = $_SESSION['user_image'];
-    $google_firstname = $_SESSION['user_first_name'];
-    $google_lastname = $_SESSION['user_last_name'];
+    $email = $_SESSION['email'];    
     }
     
 
@@ -105,8 +99,8 @@ if (isset($_POST['suscribe'])) {
                   <?php
                     if(isset($_SESSION['email'])) {
                       echo "$user";
-                    }elseif(isset($_SESSION['user_email_address'])) {
-                      echo "$google_firstname";
+                    }elseif(isset($_SESSION['google_email'])) {
+                      echo "$google_name";
                     }
                     
                   ?>
@@ -115,8 +109,8 @@ if (isset($_POST['suscribe'])) {
                 <?php
                   if(isset($_SESSION['email'])) {
                     echo '<img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle ml-2">';
-                  }elseif(isset($_SESSION['user_email_address'])) {
-                    echo '<img src="'.$_SESSION["user_image"].'" width="40" height="40" class="rounded-circle ml-2">';
+                  }elseif(isset($_SESSION['google_email'])) {
+                    echo '<img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle ml-2">';
                   }
                 ?>
                 
