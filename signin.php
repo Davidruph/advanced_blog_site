@@ -57,6 +57,7 @@ include 'loginController.php';
               </div>
 
               <div class="form-group mr-4 ml-4">
+                <a href="forgot_password.php" class="float-right">forgot password</a>
                 <input type="submit" class="btn btn-outline-primary login w-100 mt-2 mb-3" name="submit" value="Sign in">
               </div>
             </form>

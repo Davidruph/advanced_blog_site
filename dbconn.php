@@ -3,7 +3,7 @@
 $server = "localhost";  //server host
 $username = "root";	//Username of server
 $password = "";  //Server password
-$dbname = "one_meta";  //Name of the database
+$dbname = "oneupmeta";  //Name of the database
 
 $conn = mysqli_connect($server, $username, $password, $dbname);
 
