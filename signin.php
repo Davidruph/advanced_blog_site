@@ -14,17 +14,17 @@ include 'loginController.php';
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body class="bg-primary">
+<body class="bg-white">
 
   <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-5">
-          <h1 class="text-center text-white mt-3 mb-4">Sign in to Account</h1>
+        <div class="col-lg-6">
+          <h1 class="text-center text-dark mt-3 mb-4">Sign in to Account</h1>
 
            <?php if (count($errors) > 0): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?php foreach($errors as $error): ?> 
-                <li style="color: red"><?php echo $error; ?></li>
+                <li class="text-danger"><?php echo $error; ?></li>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -38,7 +38,7 @@ include 'loginController.php';
 
               <div class=" form-group mt-4 mr-4 ml-4">
                 <label for="Username">Username</label>
-                <input type="text" class="form-control" name="username" value="<?= $username ?? '' ?>" required>
+                <input type="text" class="form-control" name="username" value="<?= $user_name ?? '' ?>" required>
               </div>
 
               <div class=" form-group mr-4 ml-4">

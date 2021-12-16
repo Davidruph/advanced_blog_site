@@ -14,16 +14,16 @@ include 'signupController.php';
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body class="bg-primary">
+<body class="bg-white">
 
   <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-7">
-          <h1 class="text-center text-white mt-3 mb-4">Create an Account</h1>
+          <h1 class="text-center text-dark mt-3 mb-4">Create an Account</h1>
           <?php if (count($errors) > 0): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?php foreach($errors as $error): ?> 
-                <li style="color: red"><?php echo $error; ?></li>
+                <li class="text-danger"><?php echo $error; ?></li>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -35,7 +35,7 @@ include 'signupController.php';
               <?php if (count($success) > 0): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <?php foreach($success as $succes): ?> 
-                <li style="color: green"><?php echo $succes; ?></li>
+                <li class="text-success"><?php echo $succes; ?></li>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -50,7 +50,7 @@ include 'signupController.php';
               <div class="form-row mb-3 mt-3 mr-2 ml-2">
                 <div class="col">
                   <label for="full_name">Username</label>
-                 <input type="text" class="form-control" name="username" value="<?= $username ?? '' ?>" required="">
+                 <input type="text" class="form-control" name="username" value="<?= $user_name ?? '' ?>" required="">
                 </div>
 
                 <div class="col">

@@ -93,10 +93,10 @@
 <div class="container">
 	<div class="row justify-content-center">
 		<div class="col-lg-6 mt-5">
-			<?php if (count($errors) > 0): ?>
+			 <?php if (count($errors) > 0): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?php foreach($errors as $error): ?> 
-                <li style="color: red"><?php echo $error; ?></li>
+                <li class="text-danger"><?php echo $error; ?></li>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -108,7 +108,7 @@
               <?php if (count($success) > 0): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <?php foreach($success as $succes): ?> 
-                <li style="color: green"><?php echo $succes; ?></li>
+                <li class="text-success"><?php echo $succes; ?></li>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>

@@ -67,16 +67,16 @@ if (isset($_GET['reset_code'])) {
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body class="bg-primary">
+<body class="bg-white">
 
   <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-4">
-          <h1 class="text-center text-white mt-5 mb-4">Password Reset</h1>
+          <h1 class="text-center text-dark mt-5 mb-4">Password Reset</h1>
            <?php if (count($errors) > 0): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?php foreach($errors as $error): ?> 
-                <li style="color: red"><?php echo $error; ?></li>
+                <li class="text-danger"><?php echo $error; ?></li>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -88,7 +88,7 @@ if (isset($_GET['reset_code'])) {
               <?php if (count($success) > 0): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <?php foreach($success as $succes): ?> 
-                <li style="color: green"><?php echo $succes; ?></li>
+                <li class="text-success"><?php echo $succes; ?></li>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>

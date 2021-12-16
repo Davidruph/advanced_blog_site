@@ -16,7 +16,7 @@ require 'dbconn.php';
 if(isset($_POST['register'])){
     
     //variables
-    $username = $_POST['username'];
+    $user_name = $_POST['username'];
     $lastname = $_POST['lastname'];
     $firstname = $_POST['firstname'];
     $email = $_POST['email'];
@@ -24,7 +24,7 @@ if(isset($_POST['register'])){
     $confirm = $_POST['confirmpassword'];
     
     //trim input tags
-    $username = trim($username);
+    $user_name = trim($user_name);
     $lastname = trim($lastname);
     $firstname = trim($firstname);
     $email = trim($email);
@@ -33,6 +33,10 @@ if(isset($_POST['register'])){
     $role = "user";
     $reg_date = date("Y-m-d H:i:s", time());
     $captcha = $_POST['g-recaptcha-response'];
+
+
+    //list of reserved usernames
+    $reserved = array("1upmeta", "oneupmeta", "admin", "root");
 
     //email verification variables
     $str = '0089773bcghucjdJFGJDNDTEMNVgdhdhjabcdef0987654321';
@@ -46,19 +50,38 @@ if(isset($_POST['register'])){
     <p><a href="'.$link.'">Click to verify</a></p>
     </div>
     ';
-    
+
+
     //validate
-    if( $username === "" || $lastname === "" || $firstname === "" || $email === "" || $password === "" || $confirm === "") {
+    if( $user_name === "" || $lastname === "" || $firstname === "" || $email === "" || $password === "" || $confirm === "") {
          $errors['fields'] = "All fields are Required";
+    }
+    elseif(in_array($user_name, $reserved)) {
+         $errors['user_name'] = "Sorry you cannot use this username";
+    }
+    elseif(strlen($user_name) < 8) {
+        $errors['user_name'] = "Username cannot be lower than 8 characters";
+    }
+    elseif(strlen($user_name) > 15) {
+        $errors['user_name'] = "Username cannot exceed 15 characters";
+    }
+    elseif(!preg_match('/^[a-zA-Z0-9_]+$/',$user_name)) {
+      $errors['user_name'] = " Username can only contain alphanumeric characters and underscores";
     }
     elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
          $errors['email'] = "Email is invalid";
     }
     elseif(strlen($password) < 8) {
-        $errors['password'] = "Password too short";
+        $errors['password'] = "Password cannot be lower than 8 characters";
+    }
+    elseif(strlen($password) > 127) {
+        $errors['password'] = "Password maximum length is 127 characters";
+    }
+    elseif(!preg_match('/^(?=.*\d)(?=.*[a-zA-Z])(?=.*[!#\$%&\?]).{8,}$/',$password)) {
+      $errors['password'] = "Password must contain a letter, a number and a symbol";
     }
     elseif($password != $confirm) {
-        $errors['passwordf'] = "Passwords don't match";
+        $errors['passwordf'] = "Your passwords don't match";
     }
 
 
@@ -75,7 +98,7 @@ if(isset($_POST['register'])){
               }
 
         //check if username exist
-        $sql = mysqli_query($conn, "SELECT username FROM users WHERE username='$username'");
+        $sql = mysqli_query($conn, "SELECT username FROM users WHERE username='$user_name'");
         if(mysqli_num_rows($sql) > 0){
            $errors['pass'] = "Hi, this username has already been taken";
         }else{
@@ -88,7 +111,7 @@ if(isset($_POST['register'])){
         else{
             //hash password
             $password = password_hash($code, PASSWORD_DEFAULT);
-             $query = mysqli_query($conn, "INSERT INTO users (username, lastname, firstname, email, password, registered_on, role) VALUES('$username','$lastname','$firstname','$email','$password','$reg_date','$role')");
+             $query = mysqli_query($conn, "INSERT INTO users (username, lastname, firstname, email, password, registered_on, role) VALUES('$user_name','$lastname','$firstname','$email','$password','$reg_date','$role')");
             if($query){
                 $mail = new PHPMailer(true);
                 try {
@@ -117,7 +140,7 @@ if(isset($_POST['register'])){
                         if(mysqli_num_rows($qry) > 0){
                         $row = mysqli_fetch_array($qry);
                         $id = $row['id'];
-                        $username = $row['username'];
+                        $user_name = $row['username'];
                         $lastname = $row['lastname'];
                         $firstname = $row['firstname'];
                         $pwd = $row['password'];
@@ -131,7 +154,7 @@ if(isset($_POST['register'])){
                                 //declare session
 
                                  $_SESSION['user'] = $id;
-                                $_SESSION['username'] = $username;
+                                $_SESSION['username'] = $user_name;
                                 $_SESSION['lastname'] = $lastname;
                                 $_SESSION['firstname'] = $firstname;
                                 $_SESSION['email'] = $email;
@@ -142,7 +165,7 @@ if(isset($_POST['register'])){
                                 //declare session
 
                                  $_SESSION['user'] = $id;
-                                $_SESSION['username'] = $username;
+                                $_SESSION['username'] = $user_name;
                                 $_SESSION['lastname'] = $lastname;
                                 $_SESSION['firstname'] = $firstname;
                                 $_SESSION['email'] = $email;

@@ -17,7 +17,6 @@
     
 
     require 'dbconn.php';
-    $conn = mysqli_connect("localhost", "root", "", "one_meta");
     $errorss = array();
     $successs = array();
 
@@ -109,8 +108,6 @@ if (isset($_POST['suscribe'])) {
                 <?php
                   if(isset($_SESSION['email'])) {
                     echo '<img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle ml-2">';
-                  }elseif(isset($_SESSION['google_email'])) {
-                    echo '<img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle ml-2">';
                   }
                 ?>
                 
@@ -156,29 +153,29 @@ if (isset($_POST['suscribe'])) {
 
             <div class="col-lg-4 mt-5">
                 <h3 class="text-white mb-5 text-justify">Suscribe</h3>
-                        <?php if (count($errorss) > 0): ?>
-                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                          <?php foreach($errorss as $errorr): ?> 
-                          <li><?php echo $errorr; ?></li>
-                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                            
-                          <?php endforeach; ?>
-                        </div>
-                        <?php endif; ?>
+                         <?php if (count($errorss) > 0): ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php foreach($errorss as $error): ?> 
+                        <li class="text-danger"><?php echo $error; ?></li>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                          
+                        <?php endforeach; ?>
+                      </div>
+                      <?php endif; ?>
 
-                        <?php if (count($successs) > 0): ?>
-                          <div class="alert alert-success alert-dismissible fade show" role="alert">
-                          <?php foreach($successs as $succese): ?> 
-                          <li><?php echo $succese; ?></li>
-                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                            
-                          <?php endforeach; ?>
-                        </div>
-                        <?php endif; ?>
+                      <?php if (count($successs) > 0): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?php foreach($successs as $succes): ?> 
+                        <li class="text-success"><?php echo $succes; ?></li>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                          
+                        <?php endforeach; ?>
+                      </div>
+                      <?php endif; ?>
 
                 <form action="index.php" method="post">
                     <div class="input-group mb-3">

@@ -5,22 +5,20 @@ $errors = array();
 
 //if default login button is clicked
 if(isset($_POST['submit'])){
-     $username = $_POST['username'];
+     $user_name = $_POST['username'];
      $password = $_POST['password'];
      $captcha = $_POST['g-recaptcha-response'];
      
-     $username = trim($username);
+     $user_name = trim($user_name);
      $password = trim($password);
    
-    if($username === "") {
+    if($user_name === "") {
         $errors['username'] = "username is required";
     }
-    if($password === "") {
+    elseif($password === "") {
         $errors['password'] = "Password is required";
     }
-    elseif(strlen($password) < 6) {
-        $errors['password'] = "password too short";
-    }
+    
     if($captcha === "") {
         $errors['captcha'] = "Captcha is required";
     }
@@ -32,11 +30,11 @@ if(isset($_POST['submit'])){
           $errors['captcha'] = 'Captcha verification failed';
       }
   
-        $query = mysqli_query($conn, "SELECT * FROM users WHERE username='$username'");
+        $query = mysqli_query($conn, "SELECT * FROM users WHERE username='$user_name' OR email='$user_name'");
         if(mysqli_num_rows($query) > 0){
             $row = mysqli_fetch_array($query);
             $id = $row['id'];
-            $username = $row['username'];
+            $user_name = $row['username'];
             $lastname = $row['lastname'];
             $firstname = $row['firstname'];
             $pwd = $row['password'];
@@ -49,7 +47,7 @@ if(isset($_POST['submit'])){
                         //declare session
 
                          $_SESSION['user'] = $id;
-                        $_SESSION['username'] = $username;
+                        $_SESSION['username'] = $user_name;
                         $_SESSION['lastname'] = $lastname;
                         $_SESSION['firstname'] = $firstname;
                         $_SESSION['email'] = $email;
@@ -61,7 +59,7 @@ if(isset($_POST['submit'])){
                         //declare session
 
                         $_SESSION['user'] = $id;
-                        $_SESSION['username'] = $username;
+                        $_SESSION['username'] = $user_name;
                         $_SESSION['lastname'] = $lastname;
                         $_SESSION['firstname'] = $firstname;
                         $_SESSION['email'] = $email;
