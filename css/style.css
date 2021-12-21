@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+body{
+    font-family: 'Open Sans', sans-serif;
+}
 .footer-text{
     line-height: 30px;
     font-size: 18px;
@@ -14,11 +18,43 @@ h4 {
    width: 100%; 
    text-align: center; 
    border-bottom: 1px solid #000; 
-   line-height: 0.1em;
+   line-height: 0.1em;`
    margin: 10px 0 20px; 
 } 
 
 h4 span { 
     background:#fff; 
     padding:0 10px; 
+}
+.line:hover {
+      border-top: 2px solid white;
+      border-bottom: 2px solid white;
+      padding: 4px 0; 
+    }
+        
+.ticker {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    height: 50px;
+    margin: 0 auto
+}
+
+.news {
+    width: 76%;
+    background: #cc4444;
+    padding: 0 2%
+}
+
+.news marquee {
+    font-size: 18px;
+    margin-top: 12px
+}
+
+.news-content p {
+    margin-right: 41px;
+    display: inline
+}
+.embed-responsive .card-img-top {
+    object-fit: cover;
 }

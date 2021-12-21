@@ -25,10 +25,10 @@
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">registered users</div>
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">no. of live articles</div>
               <div class="h5 mb-0 font-weight-bold text-gray-800 text-dark">
                 <?php
-                   $count=$connection->prepare("SELECT * FROM users WHERE `role` = 'user'");
+                   $count=$connection->prepare("SELECT * FROM article WHERE `user_id` = $id AND Is_Active = 1");
                         $count->execute();
                         $users=$count->rowCount();
                         echo $users; 
@@ -37,7 +37,7 @@
               </div>
             </div>
             <div class="col-auto">
-              <i class="fas fa-users fa-2x text-green-300 text-dark"></i>
+              <i class="fas fa-newspaper fa-2x text-green-300 text-dark"></i>
             </div>
           </div>
         </div>
@@ -51,11 +51,11 @@
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">No. of subscribers</div>
+              <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">No. of deleted post</div>
               <div class="h5 mb-0 font-weight-bold text-gray-800 text-dark">
                 <?php
                   
-                     $count=$connection->prepare("SELECT * FROM suscribers");
+                     $count=$connection->prepare("SELECT * FROM article WHERE `user_id` = $id AND Is_Active = 0");
                         $count->execute();
                         $suscribers=$count->rowCount();
                         echo $suscribers; 
@@ -64,7 +64,7 @@
               </div>
             </div>
             <div class="col-auto">
-              <i class="fas fa-user fa-2x text-green-300 text-dark"></i>
+              <i class="fas fa-trash-alt fa-2x text-green-300 text-dark"></i>
             </div>
           </div>
         </div>

@@ -40,6 +40,56 @@ if (isset($_POST['suscribe'])) {
         }
     
 }
+
+$sql = 'SELECT * FROM affiliate WHERE Is_Active=1';
+$statement = $connection->prepare($sql);
+$statement->execute();
+$affiliate = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = 'SELECT * FROM announcement WHERE Is_Active=1';
+$statement = $connection->prepare($sql);
+$statement->execute();
+$announcement = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = 'SELECT * FROM article';
+$statement = $connection->prepare($sql);
+$statement->execute();
+$article = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+function timeago($time, $tense='ago'){
+    static $periods = array('year', 'month', 'day', 'hour', 'minute', 'second');
+
+    if (!(strtotime($time)>0)) {
+        //return trigger_error("wrong time format: '$time'", E_USER_ERROR);
+    }
+
+    $now = new DateTime('now');
+    $time = new DateTime($time);
+
+    $diff = $now->diff($time)->format('%y %m %d %h %i %s');
+    $diff = explode(' ', $diff);
+    $diff = array_combine($periods, $diff);
+    $diff = array_filter($diff);
+
+    $period = key($diff);
+    $value = current($diff);
+    if (!$value) {
+        $period = '';
+        $tense = '';
+        $value = 'just now';
+    }else{
+        if ($period == 'day' && $value >= 7) {
+            $period = 'week';
+            $value = floor($value/7);
+        }if ($value > 1) {
+            $period .='s';
+        }
+    }
+
+    return "$value $period $tense";
+}
+
+
 ?>
 
 
@@ -50,21 +100,30 @@ if (isset($_POST['suscribe'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>One meta home Page</title>
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  
+ 
   
 </head>
 <body>
+<div class="container-fluid bg-warning">
+    <div class="row justify-content-center">
+        <?php foreach($affiliate as $aff): ?>
+            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn btn-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["link"]; ?></a>
+        <?php endforeach; ?>
+    </div>
+</div>
 
-<section class="w-100 bg-dark mb-5">
+<section class="w-100 shadow-sm bg-dark">
   
 
-<div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light text-white bg-dark sticky-top">
+<div class="container-fluid">
+    
+
+    <nav class="navbar navbar-expand-xl navbar-light text-white bg-transparent">
     <a class="navbar-brand" href="index.php">
-    <i class="fas fa-infinity fa-spin text-white" style="font-size:60px"></i>
+        <img src="img/Logo.png" alt="" class="img-responsive" height="100" width="150">
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -73,21 +132,31 @@ if (isset($_POST['suscribe'])) {
 
         <ul class="navbar-nav ml-auto">
             
-            <li class="nav-item">
-                <a class="nav-link mr-1 text-white font-weight-bold" href="">Announcements</a>
+            <li class="nav-item line">
+                <a class="nav-link mr-1 text-white font-weight-bold active" href="#">Trends</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link mr-1 text-white font-weight-bold" href="">Events</a>
-            </li>
-            
-            <li class="nav-item">
-                <a class="nav-link mr-1 text-white font-weight-bold" href="">Blog</a>
+            <li class="nav-item line">
+                <a class="nav-link mr-1 text-white font-weight-bold" href="#">Articles & Updates</a>
             </li>
 
-            <li class="nav-item active">
-                <a class="nav-link mb-2 text-white font-weight-bold" href="">Contact</a>
+            <li class="nav-item line">
+                <a class="nav-link mr-1 text-white font-weight-bold" href="#">Top Ranks</a>
             </li>
-           
+            <li class="nav-item line">
+                <a class="nav-link mr-1 text-white font-weight-bold" href="#">Reviews & Ratings</a>
+            </li>
+            
+            <li class="nav-item line">
+                <a class="nav-link mr-1 text-white font-weight-bold" href="#">Genre</a>
+            </li>
+
+            <li class="nav-item line">
+                <a class="nav-link mb-2 text-white font-weight-bold" href="#">Reports</a>
+            </li>
+
+            <li class="nav-item line">
+                <a class="nav-link mb-2 text-white font-weight-bold" href="#">Commentaries</a>
+            </li>
 
         </ul>
         <ul class="navbar-nav ml-auto">
@@ -98,8 +167,6 @@ if (isset($_POST['suscribe'])) {
                   <?php
                     if(isset($_SESSION['email'])) {
                       echo "$user";
-                    }elseif(isset($_SESSION['google_email'])) {
-                      echo "$google_name";
                     }
                     
                   ?>
@@ -112,8 +179,9 @@ if (isset($_POST['suscribe'])) {
                 ?>
                 
               </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="logout.php">Log Out</a>
+              <div class="dropdown-menu bg-dark text-white" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item text-white bg-transparent" href="user/index.php">Dashboard</a>
+                <a class="dropdown-item text-white bg-transparent" href="logout.php">Log Out</a>
               </div>
             </li>   
           </ul>
@@ -122,6 +190,87 @@ if (isset($_POST['suscribe'])) {
 
 </div>
 </section>
+
+<div class="container-fluid bg-light">
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            <div class="ticker w-100">
+                <marquee class="news-content mt-3 mb-3">
+                    <?php foreach($announcement as $ann): ?>
+                        <p><?php echo $ann["announcement"]; ?></p>
+                    <?php endforeach; ?>
+                </marquee>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-7 mt-4 mb-4">
+            <form class="card card-md shadow">
+                <div class="card-body row no-gutters align-items-center">
+                    <div class="col">
+                        <input class="form-control form-control-lg form-control-borderless" type="search" placeholder="Search Articles">
+                    </div>
+                    <!--end of col-->
+                    <div class="col-auto ml-3">
+                        <button class="btn btn-lg btn-dark" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                    <!--end of col-->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="mt-5 mb-5" data-aos="fade-right" data-aos-duration="500">
+        <h5 class="text-center">OUR NEWS ARTICLE</h5>
+    </div>
+    <div class="row justify-content-center">
+
+        <?php foreach($article as $art): //php fetch blog post from database?>
+        <div class="col-lg-3" id="blogs">
+            <div class="card-deck h-100">
+              <div class="card row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                 <div class="embed-responsive embed-responsive-16by9">
+                     <img class="card-img-top embed-responsive-item" src="admin/article_images/<?php echo $art['image']; ?>" alt="Card image cap">
+                 </div>
+                <div class="card-body text-justify">
+                  <h5 class="card-title article"><?php echo $art['title']; ?></h5>
+                  <p class="card-text">Posted by <?php echo $art['author']; ?>, 
+
+                    <?php 
+
+                    //date_default_timezone_set('Africa/Lagos');
+                     $time_posted = $art['created_on'];
+                    $time = date($time_posted); //now
+                    $timeago = timeago($time);
+                    echo $timeago; 
+                    ?>
+
+                  
+                   <form action="article-details.php"  method="post">
+                    <input type="hidden" name="edit_id" value="<?php echo $art["id"]; ?>">
+                      <button type="submit" name="btn_edit" class="btn btn-link btn-sm stretched-link"></button>
+                </form>
+                </div>
+              </div>
+          </div>
+        </div>
+    <?php endforeach; ?> 
+
+    <div class="col-lg-3">
+        <div class="card shadow h-auto">
+            <div class="card-body">
+                <p class="card-title">Ad will be placed here</p>
+            </div>
+            
+        </div>
+    </div>           
+    </div>
+</div>
 
 <br>
 <br><br><br><br><br><br><br><br><br><br><br><br>
@@ -189,10 +338,13 @@ if (isset($_POST['suscribe'])) {
                 <p class="text-justify text-white mt-2 mb-2">Get latest updates and offers.</p>
                 <hr class="bg-white">
                 <div class="row justify-content-center mt-4 mb-4 text-white">
+                    <a href="" title="link to shop" class="btn btn-default border mr-2 icon"><i class="fas fa-store-alt"></i></a>
                     <a href="" class="btn btn-default border mr-2 icon"><i class="fab fa-facebook-f"></i></a>
                     <a href="" class="btn btn-default border mr-2 icon"><i class="fab fa-twitter"></i></a>
-                    <a href="" class="btn btn-default border mr-2 icon"><i class="fab fa-dribbble"></i></a>
-                    <a href="" class="btn btn-default border icon"><i class="fab fa-instagram"></i></a>
+                    <a href="" class="btn btn-default border mr-2 icon"><i class="fab fa-tiktok"></i></a>
+                    <a href="" class="btn btn-default border mr-2 icon"><i class="fab fa-instagram"></i></a>
+                    <a href="" class="btn btn-default border icon"><i class="fab fa-youtube"></i></a>
+
                 </div>
             </div>
         </div>
@@ -201,6 +353,13 @@ if (isset($_POST['suscribe'])) {
 
 <script src="js/jquery-3.5.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-
+<script>
+    const searchButton = document.getElementById('search-button');
+const searchInput = document.getElementById('search-input');
+searchButton.addEventListener('click', () => {
+  const inputValue = searchInput.value;
+  alert(inputValue);
+});
+</script>
 </body>
 </html>

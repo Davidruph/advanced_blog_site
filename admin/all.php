@@ -36,7 +36,7 @@ if (isset($_POST['submit'])) {
     $mail->setFrom('oneupmeta.ray@gmail.com', 'Updates/Offers'); // Gmail address which you used as SMTP server
     //$mail->debug = 2;
     $mail->isHTML(true);
-    $mail->Subject = 'Message Received From (One Meta)';
+    $mail->Subject = 'Message Received From (Oneupmeta)';
     $mail->Body = "<p>$message</p>";
     $mail->AltBody = '';
    foreach ($connection->query($sql) as $row) {

@@ -14,9 +14,6 @@ $conn = mysqli_connect("localhost", "root", "", "oneupmeta");
     $email = $_SESSION['email'];
     $role = $_SESSION['role'];
 
-        if ($role === "user") {
-            header("Location: ../user/index.php");
-        }
     }
 
 ?>
@@ -29,7 +26,7 @@ $conn = mysqli_connect("localhost", "root", "", "oneupmeta");
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Admin Dashboard</title>
+        <title>User Dashboard</title>
        
          <link href="assets/css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
