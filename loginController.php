@@ -40,6 +40,7 @@ if(isset($_POST['submit'])){
             $pwd = $row['password'];
             $email = $row['email'];
             $role = $row['role'];
+            $profile_image = $row['profile_image'];
             $code = $_POST['password'];
             
             if(password_verify($password, $pwd)){
@@ -52,6 +53,7 @@ if(isset($_POST['submit'])){
                         $_SESSION['firstname'] = $firstname;
                         $_SESSION['email'] = $email;
                         $_SESSION['role'] = $role;
+                        $_SESSION['profile_image'] = $profile_image;
                         header('location:admin/index.php');
                         exit();
                     }
@@ -64,6 +66,7 @@ if(isset($_POST['submit'])){
                         $_SESSION['firstname'] = $firstname;
                         $_SESSION['email'] = $email;
                         $_SESSION['role'] = $role;
+                        $_SESSION['profile_image'] = $profile_image;
 
                         //get user id from logged in session
                         $id = $_SESSION['user'];

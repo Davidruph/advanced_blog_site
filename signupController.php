@@ -146,6 +146,7 @@ if(isset($_POST['register'])){
                         $pwd = $row['password'];
                         $email = $row['email'];
                         $role = $row['role'];
+                        $profile_image = $row['profile_image'];
                         $code = $_POST['password'];
                         
                         //verify password
@@ -159,6 +160,7 @@ if(isset($_POST['register'])){
                                 $_SESSION['firstname'] = $firstname;
                                 $_SESSION['email'] = $email;
                                 $_SESSION['role'] = $role;
+                                $_SESSION['profile_image'] = $profile_image;
                                 header('location:admin/index.php');
                             }
                             if($qry && $role === "user"){
@@ -170,6 +172,7 @@ if(isset($_POST['register'])){
                                 $_SESSION['firstname'] = $firstname;
                                 $_SESSION['email'] = $email;
                                 $_SESSION['role'] = $role;
+                                $_SESSION['profile_image'] = $profile_image;
 
                                 //get user id from logged in session
                                 $id = $_SESSION['user'];

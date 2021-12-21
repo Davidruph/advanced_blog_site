@@ -52,10 +52,6 @@ $statement = $connection->prepare($sql);
 $statement->execute();
 $announcement = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-$sql = 'SELECT * FROM article WHERE Is_Active=1 ORDER BY id DESC LIMIT 7';
-$statement = $connection->prepare($sql);
-$statement->execute();
-$article = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 function timeago($time, $tense='ago'){
     static $periods = array('year', 'month', 'day', 'hour', 'minute', 'second');
@@ -223,7 +219,7 @@ function timeago($time, $tense='ago'){
                     </div>
                     <!--end of col-->
                     <div class="col-auto ml-3">
-                        <button class="btn btn-lg btn-dark" type="submit" name="submit"><i class="fa fa-search"></i></button>
+                        <button class="btn btn-lg btn-dark" type="submit"><i class="fa fa-search"></i></button>
                     </div>
                     <!--end of col-->
                 </div>
@@ -234,52 +230,73 @@ function timeago($time, $tense='ago'){
 
 <div class="container-fluid">
     <div class="mt-5 mb-5">
-        <h5 class="text-center">OUR NEWS ARTICLE</h5>
+    <ol class="breadcrumb mb-4 d-block" style="margin-top: 80px;">
+            <li class="breadcrumb-item active">Article Search Results</li>
+
+        </ol>
     </div>
     <div class="row justify-content-center">
+    <?php
 
-        <?php foreach($article as $art): //php fetch blog post from database?>
-        <div class="col-lg-3" id="blogs">
-            <div class="card-deck h-100">
-              <div class="card row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                 <div class="embed-responsive embed-responsive-16by9">
-                     <img class="card-img-top embed-responsive-item" src="admin/article_images/<?php echo $art['image']; ?>" alt="Card image cap">
-                 </div>
-                <div class="card-body text-justify">
-                  <h5 class="card-title article"><b><?php echo $art['title']; ?></h5></b>
-                  <p class="card-text"><small><b>Posted by <?php echo $art['author']; ?>, 
+//if search button is clicked anywhere, select db for a match else echo error
+if(isset($_POST['submit'])) {
+$searchcriteria = $_POST['searchcriteria'];
+$sql = 'SELECT * FROM article WHERE title LIKE :searchcriteria OR author LIKE :searchcriteria OR description LIKE :searchcriteria OR category LIKE :searchcriteria';
+$statement = $connection->prepare($sql);
+$statement->execute(array(':searchcriteria' => '%'.$searchcriteria.'%'));
+$article = $statement->fetchAll(PDO::FETCH_OBJ);
 
-                    <?php 
+if(sizeof($article) == 0){ 
+  echo '<div class="container">
+  <div class="alert alert-danger text-center">
+          <li>Oooops...  No Record Found.</li>
+  </div>
+</div>
+   ';
+   
+  }else{
+  
+    foreach ($article as $art) {
+      // if a match is found, foreach of the records print them out with the below template
+ ?>
 
-                    //date_default_timezone_set('Africa/Lagos');
-                     $time_posted = $art['created_on'];
-                    $time = date($time_posted); //now
-                    $timeago = timeago($time);
-                    echo $timeago; 
-                    ?>
-                    </b></small>
-                  
-                   <form action="article-details.php"  method="post">
-                    <input type="hidden" name="edit_id" value="<?php echo $art["id"]; ?>">
-                      <button type="submit" name="btn_edit" class="btn btn-link btn-sm stretched-link"></button>
-                </form>
-                </div>
-              </div>
-          </div>
-        </div>
-        <?php endforeach; ?> 
-
-        <div class="col-lg-3">
-            <div class="card shadow h-auto">
-                <div class="card-body">
-                    <p class="card-title">Ad will be placed here</p>
-                </div>
-                
+<div class="col-lg-3" id="blogs">
+    <div class="card-deck h-100">
+        <div class="card row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="embed-responsive embed-responsive-16by9">
+                <img class="card-img-top embed-responsive-item" src="admin/article_images/<?php echo $art->image ?>" alt="Card image cap">
             </div>
-        </div>           
-    </div>
+        <div class="card-body text-justify">
+            <h5 class="card-title article"><b><?php echo $art->title ?></h5></b>
+            <p class="card-text"><small><b>Posted by <?php echo $art->author ?>, 
 
-    <a href="#" class="btn btn-outline-dark btn-sm mt-5 d-block text-center">Show More</a>
+            <?php 
+
+            //date_default_timezone_set('Africa/Lagos');
+                $time_posted = $art->created_on;
+            $time = date($time_posted); //now
+            $timeago = timeago($time);
+            echo $timeago; 
+            ?>
+            </b></small>
+            
+            <form action="article-details.php"  method="post">
+            <input type="hidden" name="edit_id" value="<?php echo $art->id ?>">
+                <button type="submit" name="btn_edit" class="btn btn-link btn-sm stretched-link"></button>
+        </form>
+        </div>
+        </div>
+    </div>
+</div>
+ <?php
+}
+
+}
+}
+?>
+        
+</div>
+
 </div>
 
 <div class="container-fluid mt-5 mb-3">
