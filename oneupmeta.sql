@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 21, 2021 at 12:35 AM
+-- Generation Time: Dec 21, 2021 at 11:07 AM
 -- Server version: 5.7.36
 -- PHP Version: 8.0.13
 
@@ -222,6 +222,23 @@ CREATE TABLE IF NOT EXISTS `suscribers` (
 INSERT INTO `suscribers` (`id`, `email`, `PostingDate`) VALUES
 (1, 'jun@gmail.com', '2021-12-07 07:53:54'),
 (2, 'juniord.dj88@gmail.com', '2021-12-12 12:54:05');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblcomments`
+--
+
+DROP TABLE IF EXISTS `tblcomments`;
+CREATE TABLE IF NOT EXISTS `tblcomments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `post_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `comments` text NOT NULL,
+  `PostingDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
