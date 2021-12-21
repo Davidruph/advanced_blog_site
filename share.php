@@ -2,20 +2,16 @@
 <?php
     session_start();
 
-    if(!isset($_SESSION['email'])) {
-        //header("Location: signin.php");
-    }
-    else{
-     
-      //session variables for default login
+    if(isset($_SESSION['email'])) {
+         //session variables for default login
     $id = $_SESSION['user'];
     $user = $_SESSION['username'];
     $lastname = $_SESSION['lastname'];
     $firstname = $_SESSION['firstname'];
+    $fullname = $firstname. "  " .$lastname;
     $email = $_SESSION['email'];  
     $profile_image = $_SESSION['profile_image'];  
-    }
-    
+    }    
 
     require 'dbconn.php';
     $errorss = array();
@@ -26,20 +22,56 @@ if (isset($_POST['suscribe'])) {
     $suscriber_email = $_POST['suscriber_email'];
     $postingdate = date("Y-m-d H:i:s", time());
 
-    $query = mysqli_query($conn, "SELECT email FROM suscribers WHERE email='$suscriber_email'");
-        if(mysqli_num_rows($query) > 0){
-           $errorss['pass'] = "Hi, you've already suscribed";
-        }else{
-          $sql = 'INSERT INTO suscribers(email, PostingDate) VALUES(:email, :postingdate)';
-          $statement = $connection->prepare($sql);
+    $sql = 'INSERT INTO suscribers(email, PostingDate) VALUES(:email, :postingdate)';
+  $statement = $connection->prepare($sql);
 
-          if ($statement->execute([':email' => $suscriber_email, ':postingdate' => $postingdate])) {
-            $successs['data'] = 'Suscribed successfully';
-          }else{
-            $errorss['data'] = 'Ooops, an error occured';
-          }
+  if ($statement->execute([':email' => $suscriber_email, ':postingdate' => $postingdate])) {
+    $successs['data'] = 'Suscribed successfully';
+  }else{
+    $errorss['data'] = 'Ooops, an error occured';
+  }
+}
+
+
+
+//code for comments 
+
+if (isset($_POST['leave_comment'])) {
+    $post_id = $_POST['post_id'];
+    // $name = $_POST['name'];
+    // $email = $_POST['email'];
+    $comment = $_POST['comment'];
+    $postingdate = date("Y-m-d H:i:s", time());
+
+    //check if user is logged in
+    if(!isset($_SESSION['email'])) {
+        header("Location: login.php");
+    }
+    else{
+
+    //initialize the session
+
+    $id = $_SESSION['user'];
+    $fullname = $_SESSION['fullname'];
+    $email = $_SESSION['email'];
+
+    $query = mysqli_query($conn, "SELECT post_id, email FROM tblcomments WHERE email='$email' AND post_id = $post_id");
+        if(mysqli_num_rows($query) > 0){
+           $errorss['pass'] = "You have already made a comment for this post";
+        }else{
+
+            $qry = 'INSERT INTO tblcomments(post_id, name, email, comments, PostingDate) VALUES(:post_id, :name, :email, :comments, :postingdate)';
+            $statement = $connection->prepare($qry);
+              if ($statement->execute([':post_id' => $post_id, ':name' => $fullname, ':email' => $email, ':comments' => $comment, ':postingdate' => $postingdate])) {
+                $successs['data'] = 'Commented successfully';
+                header("Location: index.php");
+
+              }else{
+                $errorss['data'] = 'Ooops, an error occured';
+              }
         }
-    
+
+    }
 }
 
 $sql = 'SELECT * FROM affiliate WHERE Is_Active=1';
@@ -51,11 +83,6 @@ $sql = 'SELECT * FROM announcement WHERE Is_Active=1';
 $statement = $connection->prepare($sql);
 $statement->execute();
 $announcement = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-$sql = 'SELECT * FROM article WHERE Is_Active=1 ORDER BY id DESC LIMIT 7';
-$statement = $connection->prepare($sql);
-$statement->execute();
-$article = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 function timeago($time, $tense='ago'){
     static $periods = array('year', 'month', 'day', 'hour', 'minute', 'second');
@@ -121,7 +148,7 @@ function timeago($time, $tense='ago'){
 
 <div class="container-fluid">
 
-    <nav class="navbar navbar-expand-xl navbar-light text-white bg-transparent" data-aos="fade-left" data-aos-duration="500">
+    <nav class="navbar navbar-expand-xl navbar-light text-white bg-transparent">
     <a class="navbar-brand" href="index.php">
         <img src="img/Logo.png" alt="" class="img-responsive" height="100" width="150">
     </a>
@@ -135,7 +162,7 @@ function timeago($time, $tense='ago'){
                 <a class="nav-link mr-1 text-white font-weight-bold active" href="index.php">Home</a>
             </li>
             <li class="nav-item line">
-                <a class="nav-link mr-1 text-white font-weight-bold active" href="#">Trends</a>
+                <a class="nav-link mr-1 text-white font-weight-bold" href="#">Trends</a>
             </li>
             <li class="nav-item line">
                 <a class="nav-link mr-1 text-white font-weight-bold" href="#">Articles & Updates</a>
@@ -178,7 +205,7 @@ function timeago($time, $tense='ago'){
                 </label>
                 <?php
                   if(isset($_SESSION['email'])) {
-                    echo '<img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle ml-2">';
+                    echo '<img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/art/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle ml-2">';
                   }
                 ?>
                 
@@ -214,96 +241,207 @@ function timeago($time, $tense='ago'){
 </div>
 
 <div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-7 mt-4 mb-4">
-            <form class="card card-md shadow" action="search.php" method="post">
-                <div class="card-body row no-gutters align-items-center">
-                    <div class="col">
-                        <input class="form-control form-control-lg form-control-borderless" name="searchcriteria" type="search" placeholder="Search Articles">
-                    </div>
-                    <!--end of col-->
-                    <div class="col-auto ml-3">
-                        <button class="btn btn-lg btn-dark" type="submit" name="submit"><i class="fa fa-search"></i></button>
-                    </div>
-                    <!--end of col-->
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
     <div class="mt-5 mb-5">
-        <h5 class="text-center">OUR NEWS ARTICLE</h5>
+        <ol class="breadcrumb mb-4 d-block" style="margin-top: 50px;">
+            <li class="breadcrumb-item active">Article Details</li>
+        </ol>
     </div>
-    <div class="row justify-content-center">
+    <div class="row">
+    <div class="col-md-8">
 
-        <?php foreach($article as $art): //php fetch blog post from database?>
-        <div class="col-lg-3" id="blogs">
-            <div class="card-deck h-100">
-              <div class="card row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                 <div class="embed-responsive embed-responsive-16by9">
-                     <img class="card-img-top embed-responsive-item" src="admin/article_images/<?php echo $art['image']; ?>" alt="Card image cap">
-                 </div>
-                <div class="card-body text-justify">
-                  <h5 class="card-title article"><b><?php echo $art['title']; ?></h5></b>
-                  <p class="card-text"><small><b>Posted by <?php echo $art['author']; ?>, 
+<?php
+    if (isset($_GET['article_id'])) {
+      $article_id = $_GET['article_id'];
+       
+      $sql = 'SELECT * FROM article WHERE id=:id';
+      $statement = $connection->prepare($sql);
+      $statement->execute([':id' => $article_id ]);
+      $article = $statement->fetchAll(PDO::FETCH_OBJ);
 
-                    <?php 
+      
+      foreach ($article as $art) {
+        ?>
 
-                    //date_default_timezone_set('Africa/Lagos');
-                     $time_posted = $art['created_on'];
-                    $time = date($time_posted); //now
-                    $timeago = timeago($time);
-                    echo $timeago; 
-                    ?>
-                    </b></small>
+           <div class="card mb-4">
 
-                    <div class="star-rating">
-                        <span class="fa divya fa-star" data-rating="1" style="font-size:13px;"></span>
-                        <span class="fa fa-star" data-rating="2" style="font-size:13px;"></span>
-                        <span class="fa fa-star" data-rating="3" style="font-size:13px;"></span>
-                        <span class="fa fa-star" data-rating="4" style="font-size:13px;"></span>
-                        <span class="fa fa-star-half" data-rating="5" style="font-size:13px;"></span>
-                        <span class="fa" style="font-size:13px;">4.9</span>
-                        <input type="hidden" name="whatever3" class="rating-value" value="1">
-				    </div>
-                  
-                   <form action="article-details.php"  method="post">
-                    <input type="hidden" name="edit_id" value="<?php echo $art["id"]; ?>">
-                      <button type="hidden" name="btn_edit" class="btn btn-sm stretched-link"></button>
-                </form>
-                </div>
-              </div>
-          </div>
-        </div>
-        <?php endforeach; ?> 
-
-        <div class="col-lg-3">
-            <div class="card shadow h-auto">
                 <div class="card-body">
-                    <p class="card-title">Ad will be placed here</p>
+                  <h2 class="card-title"><b><?php echo $art->title;?></b></h2>
+                  <p><b>Category : </b><?php echo htmlentities($art->category);?><br>
+                  <small><p><b><a href="#"><?php echo date("F j, Y", strtotime($art->created_on)); ?></a>. Posted by <?php echo htmlentities($art->author);?></b> &nbsp; <a href="#">Comments (<?php $article_post_id = $art->id;$count=$connection->prepare("SELECT post_id FROM tblcomments WHERE post_id = $article_post_id");$count->execute();$comments=$count->rowCount();echo $comments; ?>)</a> &nbsp; <a href="#">Notify Me</a></p></small>
+                    
+                    <hr />
+
+                    <img class="img-fluid rounded w-100" style="height: 300px;" src="admin/article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
+
+                                <p class="card-text"><?php 
+                                        echo $art->description;
+                                ?></p>
+                 
                 </div>
-                
-            </div>
-        </div>           
+                 <div class="card-footer">
+                  <a href="index.php">Back to Homepage</a>
+              </div>
+              </div>
+             
+
+        <?php
+}
+}
+?>
+</div>
+<div class="col-md-4">
+
+<?php
+    if (!empty($article)) {
+        foreach ($article as $art) {
+
+             $comment_id = $art->id;
+              //var_dump($comment_id);
+
+              $qry = "SELECT * FROM tblcomments WHERE post_id = $comment_id";
+                $statement = $connection->prepare($qry);
+                $statement->execute();
+                $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
+                //var_dump($comments);
+        }
+
+        ?>
+             <p>
+                  <a class="btn btn-outline-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    View comments
+                  </a>
+                </p>
+                <div class="collapse mb-5" id="collapseExample">
+                  <div class="card card-body">
+
+                    <div class="table-responsive">
+                          <table class="table table-borderless" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th><small>#</small></th>
+                                    <th><small>Date</small></th>
+                                    <th><small>Name</small></th>
+                                    <th><small>Comments</small></th>
+                                </tr>
+                            </thead>
+                              <tbody>
+                                <?php 
+                                $counter = 0;
+                                foreach($comments as $comment): ?>
+                                  <tr>
+                                    <td><small>
+                                <p class="card-text"><?php echo ++$counter; ?></p></p>
+                            </small></td>
+                                   
+
+                                    <td><small>
+                                <p class="card-text"><?php echo htmlentities($comment['PostingDate']);?></p></p>
+                            </small></td>
+                                   
+                                    <td>
+                                         <small>
+                                <p class="card-text"><?php echo htmlentities($comment['name']);?></p></p>
+                            </small>
+                                    </td>
+
+                                    <td>
+                                       <small>
+                                <p class="card-text "><?php echo htmlentities($comment['comments']);?></p></p>
+                            </small>
+                                    </td>
+                                  </tr>
+
+                                  <?php endforeach; ?>
+                              </tbody>
+                          </table>
+                      </div>
+
+                    
+                    <button onclick="myFunction()" id="comment_button" class="btn btn-outline-primary">add comment</button>
+                  </div>
+                </div>
+
+        <?php
+    }
+?>
+
+<?php
+    if(isset($_SESSION['email']) && !empty($article)) {
+?>
+<div class="card mb-4">
+<h5 class="card-header">Leave a comment <?= $fullname ?? '' ?></h5>
+<div class="card-body">
+       <form name="search" action="article-details.php" method="post">
+        <input type="hidden" name="post_id" value="<?= $id ?? '' ?>">
+
+        
+    <div class="form-group">
+        <input type="hidden" name="name" class="form-control" value="<?= $fullname ?? '' ?>">
     </div>
 
-    <a href="#" class="btn btn-outline-dark btn-sm mt-5 d-block text-center">Show More</a>
+    <div class="form-group">
+        <input type="hidden" name="email" class="form-control" value="<?= $email ?? '' ?>">
+    </div>
+
+    <div class="form-group">
+        <textarea name="comment" id="comment" class="form-control" placeholder="Your comment"></textarea>
+    </div>
+    <button class="btn btn-secondary" name="leave_comment" type="submit">Go!</button>
+
+    </form>
 </div>
 
-<div class="container-fluid mt-5 mb-3">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card shadow h-auto">
-                <div class="card-body text-center">
-                    <p class="card-title">Ad will be placed here</p>
-                </div>
-                
-            </div>
+</div>
+                <?php
+            }else{
+                ?>
+                <?php
+
+                    if (!empty($article)) {
+                        ?>
+
+                            <div class="card mb-4">
+                            <h5 class="card-header">Leave a comment</h5>
+                            <div class="card-body">
+                            <form name="search" action="article-details.php" method="post">
+                                    <input type="hidden" name="post_id" value="<?= $id ?? '' ?>">
+
+                            <div class="form-group">
+                                <input type="text" id="name" name="name" class="form-control" placeholder="Your name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="email" name="email" class="form-control" placeholder="Your email" required>
+                            </div>
+
+                            <div class="form-group" id="comment">
+                                <textarea name="comment" class="form-control" placeholder="Your comment" required></textarea>
+                            </div>
+                            <button class="btn btn-secondary" name="leave_comment" type="submit">Go!</button>
+
+                            </form>
+                            </div>
+
+                          </div>
+
+                        <?php
+                    }
+                ?>
+                    
+
+                <?php
+            }
+
+        ?>
+      
+          
+       
+  
+    </div>
+</div>
         </div>
-    </div>
-</div>
+
+
 
 <div class="footer bg-dark">
     <div class="container-fluid">
@@ -327,7 +465,7 @@ function timeago($time, $tense='ago'){
                 <h3 class="text-white mb-5 text-justify">Activities</h3>
                 <li class="mb-2 text-white text-justify"><a href="" class="text-white">Press Releases</a></li>
                 <li class="mb-2 text-white text-justify"><a href="" class="text-white">Multimedia</a></li>
-                <li class="mb-2 text-white text-justify"><a href="" class="text-white">Blog</a></li>
+                <li class="mb-2 text-white text-justify"><a href="" class="text-white">art</a></li>
                 <li class="mb-2 text-white text-justify"><a href="" class="text-white">LSA in the Media</a></li>
             </div>
 
@@ -359,7 +497,7 @@ function timeago($time, $tense='ago'){
 
                 <form action="index.php" method="post">
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" name="suscriber_email" value="<?= $email ?? '' ?>" required placeholder="Your email" aria-label="blogpient's email" aria-describedby="basic-addon2">
+                        <input type="email" class="form-control" name="suscriber_email" value="<?= $email ?? '' ?>" required placeholder="Your email" aria-label="artpient's email" aria-describedby="basic-addon2">
                         <div class="input-group-append">
                         <input type="submit" name="suscribe" class="btn btn-danger" value="suscribe">
                         </div>
@@ -391,6 +529,12 @@ searchButton.addEventListener('click', () => {
   const inputValue = searchInput.value;
   alert(inputValue);
 });
+</script>
+
+<script>
+    function myFunction() {
+     document.getElementById("name").focus();
+}
 </script>
 </body>
 </html>
