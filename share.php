@@ -270,8 +270,22 @@ function timeago($time, $tense='ago'){
                   <small><p><b><a href="#"><?php echo date("F j, Y", strtotime($art->created_on)); ?></a>. Posted by <?php echo htmlentities($art->author);?></b> &nbsp; <a href="#">Comments (<?php $article_post_id = $art->id;$count=$connection->prepare("SELECT post_id FROM tblcomments WHERE post_id = $article_post_id");$count->execute();$comments=$count->rowCount();echo $comments; ?>)</a> &nbsp; <a href="#">Notify Me</a></p></small>
                     
                     <hr />
+                    <?php
+                        $media = $art['image'];
+                        $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
+                        if(in_array($media, $video_format)) {
+                            ?>
+                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='admin/article_images/<?php echo $art['image']; ?>' type='video/mp4'> </video>"
+                            <?php
+                       }else {
+                           ?>
+                           <img class="img-fluid rounded w-100" style="height: 300px;" src="admin/article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
 
-                    <img class="img-fluid rounded w-100" style="height: 300px;" src="admin/article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
+                            <?php
+                       }
+
+                     ?>
+                    
 
                                 <p class="card-text"><?php 
                                         echo $art->description;

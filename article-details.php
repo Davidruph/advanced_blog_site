@@ -288,8 +288,21 @@ function timeago($time, $tense='ago'){
                     </fieldset>
                     
                     <hr />
+                    <?php
+                        $media = $art['image'];
+                        $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
+                        if(in_array($media, $video_format)) {
+                            ?>
+                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='admin/article_images/<?php echo $art['image']; ?>' type='video/mp4'> </video>"
+                            <?php
+                       }else {
+                           ?>
+                             <img class="img-fluid rounded w-100" style="height: 300px;" src="admin/article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
 
-                    <img class="img-fluid rounded w-100" style="height: 300px;" src="admin/article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
+                            <?php
+                       }
+
+                     ?>
 
                                 <p class="card-text"><?php 
                                         echo $art->description;
