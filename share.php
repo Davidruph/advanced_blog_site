@@ -150,7 +150,7 @@ function timeago($time, $tense='ago'){
 
     <nav class="navbar navbar-expand-xl navbar-light text-white bg-transparent">
     <a class="navbar-brand" href="index.php">
-        <img src="img/Logo.png" alt="" class="img-responsive" height="100" width="150">
+    <img src="img/Logo.png" alt="logo" class="img-responsive" height="100" width="auto">
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -462,7 +462,7 @@ function timeago($time, $tense='ago'){
         <div class="row justify-content-center">
             <div class="col-lg-4 mt-5">
                 <a class="navbar-brand" href="index.php">
-                    <img src="img/Logo.png" alt="logo" class="img-fluid header_pic">
+                <img src="img/Logo.png" alt="logo" class="img-responsive" height="100" width="auto">
                 </a>
                 <p class="text-white footer-text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum delenit augue duis dolore te feugait. <a class="text-decoration-none" href="aboutus.php">Read More &nbsp;<i class="fas fa-long-arrow-alt-right"></i></a> </p>
             </div>

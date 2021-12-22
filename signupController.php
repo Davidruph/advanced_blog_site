@@ -184,7 +184,7 @@ if(isset($_POST['register'])){
 
                                     $update_query = mysqli_query($conn, "UPDATE log SET user_id = '$id', log_date_time = '$log_date_time', status = '$status' WHERE user_id = '$id'");
                                     if($update_query){
-                                        header('location:index.php');
+                                        header('location:user/index.php');
                                     }
 
                                 }else{

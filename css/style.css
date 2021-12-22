@@ -58,3 +58,6 @@ h4 span {
 .embed-responsive .card-img-top {
     object-fit: cover;
 }
+.bg-dark{
+    background-color: #152277 !important;
+}

@@ -85,7 +85,7 @@ if(isset($_POST['submit'])){
                             //update log details
                             $log_query = mysqli_query($conn, "INSERT INTO log (user_id, log_date_time, status) VALUES('$id','$log_date_time','$status')");
                             if($log_query){
-                                header('location:index.php');
+                                header('location:user/index.php');
                             }
                         }
 
