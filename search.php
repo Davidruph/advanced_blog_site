@@ -265,11 +265,11 @@ if(sizeof($article) == 0){
         <div class="card row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
             <div class="embed-responsive embed-responsive-16by9">
             <?php
-                        $media = $art['image'];
+                        $media = $art->image;
                         $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
                         if(in_array($media, $video_format)) {
                             ?>
-                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='admin/article_images/<?php echo $art['image']; ?>' type='video/mp4'> </video>"
+                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='admin/article_images/<?php echo $art->image ?>' type='video/mp4'> </video>"
                             <?php
                        }else {
                            ?>

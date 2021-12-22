@@ -271,11 +271,11 @@ function timeago($time, $tense='ago'){
                     
                     <hr />
                     <?php
-                        $media = $art['image'];
+                        $media = $art->image;
                         $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
                         if(in_array($media, $video_format)) {
                             ?>
-                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='admin/article_images/<?php echo $art['image']; ?>' type='video/mp4'> </video>"
+                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='admin/article_images/<?php echo $art->image ?>' type='video/mp4'> </video>"
                             <?php
                        }else {
                            ?>
