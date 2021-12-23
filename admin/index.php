@@ -55,7 +55,7 @@
               <div class="h5 mb-0 font-weight-bold text-gray-800 text-dark">
                 <?php
                   
-                     $count=$connection->prepare("SELECT * FROM suscribers");
+                     $count=$connection->prepare("SELECT * FROM subscribers");
                         $count->execute();
                         $suscribers=$count->rowCount();
                         echo $suscribers; 

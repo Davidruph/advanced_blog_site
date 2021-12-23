@@ -1,7 +1,7 @@
 <?php
 require 'functions/dbconn.php';
 
-$sql = 'SELECT email FROM suscribers';
+$sql = 'SELECT email FROM subscribers';
 // $statement = $connection->prepare($sql);
 // $statement->execute();
 // $emails = $statement->fetchAll();

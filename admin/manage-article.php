@@ -82,10 +82,10 @@ if (isset($_POST['delete_btn'])) {
                     </thead>
                     <tbody>
                         
-                     <?php foreach($article as $art): ?>
+                     <?php $counter = 0; foreach($article as $art): ?>
             
 					<tr>
-						<td><?php echo $art['id']; ?></td>
+                        <td><?php echo ++$counter; ?></td>
                         <td><?php echo $art['title']; ?></td>
                         <td><?php echo $art['category']; ?></td>
                         <td><?php echo $art['author']; ?></td>

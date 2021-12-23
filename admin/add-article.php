@@ -32,7 +32,7 @@ if (isset ($_POST['submit'])){
   //rename the image file
   //$imgnewfile = md5($imgfile).$extension;
   $temp_name = $_FILES['postimage']['tmp_name'];
-  move_uploaded_file($temp_name,"article_images/".$imgfile);
+  move_uploaded_file($temp_name,"../article_images/".$imgfile);
 
   $sql = 'INSERT INTO article(user_id, title, author, description, image, category, created_on, Is_Active) VALUES(:user_id, :title, :author, :description, :imgnewfile, :category, :created_on, :status)';
   $statement = $connection->prepare($sql);

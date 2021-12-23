@@ -125,7 +125,7 @@ if(isset($_POST['submit'])){
 
             } 
         }else {
-                    $errors['username'] = "User not found";
+                    $errors['username'] = "The username and password you have entered doesn't match";
 
             }
 

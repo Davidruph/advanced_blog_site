@@ -61,3 +61,6 @@ h4 span {
 .bg-dark{
     background-color: #152277 !important;
 }
+.fa-star:before, .fa-star-half {
+    color: #ffc107;
+}

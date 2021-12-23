@@ -83,10 +83,10 @@ if (isset($_POST['delete_btn'])) {
                     </thead>
                     <tbody>
                         
-                     <?php foreach($affiliate as $aff): ?>
+                     <?php $counter = 0; foreach($affiliate as $aff): ?>
             
 					<tr>
-						<td><?php echo $aff['id']; ?></td>
+                    <td><?php echo ++$counter; ?></td>
             <td><?php echo $aff['link']; ?></td>
             <td><?php echo $aff['alt']; ?></td>
 						<td style="display: inline-flex;">

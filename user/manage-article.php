@@ -4,11 +4,6 @@
 require 'functions/dbconn.php';
 $errors = array();
 $success = array();
-//fetch postpe
-$sql = 'SELECT * FROM article WHERE Is_Active=1';
-$statement = $connection->prepare($sql);
-$statement->execute();
-$article = $statement->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <?php
@@ -30,6 +25,12 @@ if (isset($_POST['delete_btn'])) {
 <?php
     //All header tag to be included
     include('include/header.php');
+
+    //fetch article
+$sql = 'SELECT * FROM article WHERE Is_Active=1 AND user_id=:id';
+$statement = $connection->prepare($sql);
+$statement->execute([':id' => $id]);
+$article = $statement->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <?php
@@ -82,10 +83,10 @@ if (isset($_POST['delete_btn'])) {
                     </thead>
                     <tbody>
                         
-                     <?php foreach($article as $art): ?>
+                     <?php $counter = 0; foreach($article as $art): ?>
             
 					<tr>
-						<td><?php echo $art['id']; ?></td>
+                        <td><?php echo ++$counter; ?></td>
                         <td><?php echo $art['title']; ?></td>
                         <td><?php echo $art['category']; ?></td>
                         <td><?php echo $art['author']; ?></td>

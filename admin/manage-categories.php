@@ -82,10 +82,10 @@ if (isset($_POST['delete_btn'])) {
                     </thead>
                     <tbody>
                         
-                     <?php foreach($category as $cat): ?>
+                     <?php $counter = 0; foreach($category as $cat): ?>
             
 					<tr>
-						<td><?php echo $cat['id']; ?></td>
+                    <td><?php echo ++$counter; ?></td>
             <td><?php echo $cat['CategoryName']; ?></td>
 						<td style="display: inline-flex;">
               <form action="edit-category.php" method="post">

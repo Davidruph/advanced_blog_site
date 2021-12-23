@@ -10,6 +10,7 @@
     $firstname = $_SESSION['firstname'];
     $fullname = $firstname. "  " .$lastname;
     $email = $_SESSION['email'];  
+    $role = $_SESSION['role']; 
     $profile_image = $_SESSION['profile_image'];  
     }    
 
@@ -18,19 +19,25 @@
     $successs = array();
 
     //if suscribe button is clicked
-if (isset($_POST['suscribe'])) {
-    $suscriber_email = $_POST['suscriber_email'];
-    $postingdate = date("Y-m-d H:i:s", time());
-
-    $sql = 'INSERT INTO suscribers(email, PostingDate) VALUES(:email, :postingdate)';
-  $statement = $connection->prepare($sql);
-
-  if ($statement->execute([':email' => $suscriber_email, ':postingdate' => $postingdate])) {
-    $successs['data'] = 'Suscribed successfully';
-  }else{
-    $errorss['data'] = 'Ooops, an error occured';
-  }
-}
+    if (isset($_POST['subscribe'])) {
+        $subscriber_email = $_POST['subscriber_email'];
+        $postingdate = date("Y-m-d H:i:s", time());
+    
+        $query = mysqli_query($conn, "SELECT email FROM subscribers WHERE email='$subscriber_email'");
+            if(mysqli_num_rows($query) > 0){
+               $errorss['pass'] = "Hi, you've already subscribed";
+            }else{
+              $sql = 'INSERT INTO subscribers(email, PostingDate) VALUES(:email, :postingdate)';
+              $statement = $connection->prepare($sql);
+    
+              if ($statement->execute([':email' => $subscriber_email, ':postingdate' => $postingdate])) {
+                $successs['data'] = 'Subscribed successfully';
+              }else{
+                $errorss['data'] = 'Ooops, an error occured';
+              }
+            }
+        
+    }
 
 
 
@@ -205,13 +212,23 @@ function timeago($time, $tense='ago'){
                 </label>
                 <?php
                   if(isset($_SESSION['email'])) {
-                    echo '<img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/art/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle ml-2">';
+                    echo '<img src="img/avatar.jpg" width="40" height="40" class="rounded-circle ml-2">';
                   }
                 ?>
                 
               </a>
               <div class="dropdown-menu bg-dark text-white" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item text-white bg-transparent" href="user/index.php">Dashboard</a>
+              <?php
+                    if ($_SESSION['role'] === "admin") {
+                        ?>
+                            <a class="dropdown-item text-white bg-transparent" href="admin/index.php">My Account</a>
+                        <?php
+                    }else{
+                        ?>
+                        <a class="dropdown-item text-white bg-transparent" href="user/index.php">My Account</a>
+                        <?php
+                    }
+                  ?>
                 <a class="dropdown-item text-white bg-transparent" href="logout.php">Log Out</a>
               </div>
             </li>   
@@ -275,11 +292,11 @@ function timeago($time, $tense='ago'){
                         $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
                         if(in_array($media, $video_format)) {
                             ?>
-                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='admin/article_images/<?php echo $art->image ?>' type='video/mp4'> </video>"
+                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='article_images/<?php echo $art->image ?>' type='video/mp4'> </video>"
                             <?php
                        }else {
                            ?>
-                           <img class="img-fluid rounded w-100" style="height: 300px;" src="admin/article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
+                           <img class="img-fluid rounded w-100" style="height: 300px;" src="article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
 
                             <?php
                        }
@@ -484,7 +501,7 @@ function timeago($time, $tense='ago'){
             </div>
 
             <div class="col-lg-4 mt-5">
-                <h3 class="text-white mb-5 text-justify">Suscribe</h3>
+                <h3 class="text-white mb-5 text-justify">Subscribe</h3>
                          <?php if (count($errorss) > 0): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <?php foreach($errorss as $error): ?> 
@@ -509,11 +526,11 @@ function timeago($time, $tense='ago'){
                       </div>
                       <?php endif; ?>
 
-                <form action="index.php" method="post">
+                <form action="share.php" method="post">
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" name="suscriber_email" value="<?= $email ?? '' ?>" required placeholder="Your email" aria-label="artpient's email" aria-describedby="basic-addon2">
+                        <input type="email" class="form-control" name="subscriber_email" value="<?= $email ?? '' ?>" required placeholder="Your email" aria-label="recipient's email" aria-describedby="basic-addon2">
                         <div class="input-group-append">
-                        <input type="submit" name="suscribe" class="btn btn-danger" value="suscribe">
+                        <input type="submit" name="subscribe" class="btn btn-danger" value="subscribe">
                         </div>
                     </div>
                 </form>

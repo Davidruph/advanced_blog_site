@@ -23,7 +23,7 @@
                 </label>
                 <?php
                   if(isset($_SESSION['email'])) {
-                    echo '<img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle ml-2">';
+                    echo '<img src="../img/avatar.jpg" width="40" height="40" class="rounded-circle ml-2">';
                   }
                 ?>
                 
@@ -50,6 +50,17 @@
                                 Dashboard
                             </a>
                             <div class="sb-sidenav-menu-heading">My Account</div>
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#coll12" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tv fa-fw"></i></div>
+                                Channel
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="coll12" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="#">Add Channel</a>
+                                    <!-- <a class="nav-link" href="#">Manage Channel</a> -->
+                                </nav>
+                            </div>
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#coll2" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-newspaper fa-fw"></i></div>
                                 Article

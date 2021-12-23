@@ -82,10 +82,10 @@ if (isset($_POST['delete_btn'])) {
                     </thead>
                     <tbody>
                         
-                     <?php foreach($announcement as $ann): ?>
+                     <?php $counter = 0; foreach($announcement as $ann): ?>
             
 					<tr>
-						<td><?php echo $ann['id']; ?></td>
+                    <td><?php echo ++$counter; ?></td>
             <td><?php echo $ann['announcement']; ?></td>
 						<td style="display: inline-flex;">
               <form action="edit-announcement.php" method="post">

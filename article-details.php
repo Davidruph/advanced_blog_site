@@ -18,18 +18,23 @@
     $successs = array();
 
     //if suscribe button is clicked
-if (isset($_POST['suscribe'])) {
-    $suscriber_email = $_POST['suscriber_email'];
+if (isset($_POST['subscribe'])) {
+    $subscriber_email = $_POST['subscriber_email'];
     $postingdate = date("Y-m-d H:i:s", time());
 
-    $sql = 'INSERT INTO suscribers(email, PostingDate) VALUES(:email, :postingdate)';
+    $query = mysqli_query($conn, "SELECT email FROM subscribers WHERE email='$subscriber_email'");
+    if(mysqli_num_rows($query) > 0){
+       $errorss['pass'] = "Hi, you've already subscribed";
+    }else{
+    $sql = 'INSERT INTO subscribers(email, PostingDate) VALUES(:email, :postingdate)';
   $statement = $connection->prepare($sql);
 
-  if ($statement->execute([':email' => $suscriber_email, ':postingdate' => $postingdate])) {
-    $successs['data'] = 'Suscribed successfully';
+  if ($statement->execute([':email' => $subscriber_email, ':postingdate' => $postingdate])) {
+    $successs['data'] = 'Subscribed successfully';
   }else{
     $errorss['data'] = 'Ooops, an error occured';
   }
+}
 }
 
 
@@ -45,14 +50,14 @@ if (isset($_POST['leave_comment'])) {
 
     //check if user is logged in
     if(!isset($_SESSION['email'])) {
-        header("Location: signin.php");
+        header("Location: signup.php");
     }
     else{
 
     //initialize the session
 
     $id = $_SESSION['user'];
-    $fullname = $_SESSION['fullname'];
+    $name = $fullname;
     $email = $_SESSION['email'];
 
     $query = mysqli_query($conn, "SELECT post_id, email FROM tblcomments WHERE email='$email' AND post_id = $post_id");
@@ -62,7 +67,7 @@ if (isset($_POST['leave_comment'])) {
 
             $qry = 'INSERT INTO tblcomments(post_id, name, email, comments, PostingDate) VALUES(:post_id, :name, :email, :comments, :postingdate)';
             $statement = $connection->prepare($qry);
-              if ($statement->execute([':post_id' => $post_id, ':name' => $fullname, ':email' => $email, ':comments' => $comment, ':postingdate' => $postingdate])) {
+              if ($statement->execute([':post_id' => $post_id, ':name' => $name, ':email' => $email, ':comments' => $comment, ':postingdate' => $postingdate])) {
                 $successs['data'] = 'Commented successfully';
                 header("Location: index.php");
 
@@ -206,13 +211,23 @@ function timeago($time, $tense='ago'){
                 </label>
                 <?php
                   if(isset($_SESSION['email'])) {
-                    echo '<img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/art/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle ml-2">';
+                    echo '<img src="img/avatar.jpg" width="40" height="40" class="rounded-circle ml-2">';
                   }
                 ?>
                 
               </a>
               <div class="dropdown-menu bg-dark text-white" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item text-white bg-transparent" href="user/index.php">Dashboard</a>
+              <?php
+                    if ($_SESSION['role'] === "admin") {
+                        ?>
+                            <a class="dropdown-item text-white bg-transparent" href="admin/index.php">My Account</a>
+                        <?php
+                    }else{
+                        ?>
+                        <a class="dropdown-item text-white bg-transparent" href="user/index.php">My Account</a>
+                        <?php
+                    }
+                  ?>
                 <a class="dropdown-item text-white bg-transparent" href="logout.php">Log Out</a>
               </div>
             </li>   
@@ -258,7 +273,7 @@ function timeago($time, $tense='ago'){
       $statement = $connection->prepare($sql);
       $statement->execute([':id' => $id ]);
       $article = $statement->fetchAll(PDO::FETCH_OBJ);
-
+     
       
       foreach ($article as $art) {
         ?>
@@ -269,6 +284,7 @@ function timeago($time, $tense='ago'){
                   <h2 class="card-title"><b><?php echo $art->title;?></b></h2>
                   <p><b>Category : </b><?php echo htmlentities($art->category);?><br>
                   <small><p><b><a href="#"><?php echo date("F j, Y", strtotime($art->created_on)); ?></a>. Posted by <?php echo htmlentities($art->author);?></b> &nbsp; <a href="#">Comments (<?php $article_post_id = $art->id;$count=$connection->prepare("SELECT post_id FROM tblcomments WHERE post_id = $article_post_id");$count->execute();$comments=$count->rowCount();echo $comments; ?>)</a> &nbsp; <a href="#">Notify Me</a></p></small>
+                 
 
                   <fieldset class="border p-2">
                     <legend  class="w-auto"></legend>
@@ -293,11 +309,11 @@ function timeago($time, $tense='ago'){
                         $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
                         if(in_array($media, $video_format)) {
                             ?>
-                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='admin/article_images/<?php echo $art->image ?>' type='video/mp4'> </video>"
+                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='article_images/<?php echo $art->image ?>' type='video/mp4'> </video>"
                             <?php
                        }else {
                            ?>
-                             <img class="img-fluid rounded w-100" style="height: 300px;" src="admin/article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
+                             <img class="img-fluid rounded w-100" style="height: 300px;" src="article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
 
                             <?php
                        }
@@ -366,7 +382,7 @@ function timeago($time, $tense='ago'){
                             <thead>
                                 <tr>
                                     <th><small>#</small></th>
-                                    <th><small>Date</small></th>
+                                    <th><small>Time</small></th>
                                     <th><small>Name</small></th>
                                     <th><small>Comments</small></th>
                                 </tr>
@@ -382,7 +398,16 @@ function timeago($time, $tense='ago'){
                                    
 
                                     <td><small>
-                                <p class="card-text"><?php echo htmlentities($comment['PostingDate']);?></p></p>
+                                <p class="card-text">
+                                <?php 
+
+                                    //date_default_timezone_set('Africa/Lagos');
+                                    $time_posted = $comment['PostingDate'];
+                                    $time = date($time_posted); //now
+                                    $timeago = timeago($time);
+                                    echo $timeago; 
+                                    ?>
+
                             </small></td>
                                    
                                     <td>
@@ -454,15 +479,7 @@ function timeago($time, $tense='ago'){
                                     <input type="hidden" name="post_id" value="<?= $id ?? '' ?>">
 
                             <div class="form-group">
-                                <input type="text" id="name" name="name" class="form-control" placeholder="Your name" required>
-                            </div>
-
-                            <div class="form-group">
-                                <input type="email" name="email" class="form-control" placeholder="Your email" required>
-                            </div>
-
-                            <div class="form-group" id="comment">
-                                <textarea name="comment" class="form-control" placeholder="Your comment" required></textarea>
+                                <textarea name="comment" id="comment" class="form-control" placeholder="Your comment" required></textarea>
                             </div>
                             <button class="btn btn-secondary" name="leave_comment" type="submit">Go!</button>
 
@@ -480,10 +497,102 @@ function timeago($time, $tense='ago'){
             }
 
         ?>
-      
+        <?php
+             if (!empty($article)) {
+                foreach ($article as $art) {
+                    $id = $art->id;
+                    $title = $art->title;
+                    $category = $art->category;
+                    $author = $art->author;
+                    $description = $art->description;
+
+                   
+
+                    $sql_related = 'SELECT * FROM article WHERE title LIKE :title OR author LIKE :author OR description LIKE :description OR category LIKE :category LIMIT 3';
+                    $statement = $connection->prepare($sql_related);
+                    $statement->execute(array(':title' => '%'.$title.'%', ':author' => '%'.$author.'%', ':description' => '%'.$description.'%', ':category' => '%'.$category.'%'));
+                    $related_article = $statement->fetchAll(PDO::FETCH_OBJ);
+                    ?>
+                    <div class="mt-5 mb-4 justify-content-center">
+                        
+                        <p class="text-center">Related Articles</p>
+                    <?php
+                    
+                    foreach ($related_article as $rel){
+                        if ($rel->id != $id) {
+
+                            //var_dump($rel->id);
+                            ?>  
+                            
+            <div class="justify-content-center">
+            <div class="card mb-2 text-center" >
+                 <div class="embed-responsive embed-responsive-4by3">
+                     <?php
+                        $media = $rel->image;
+                        $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
+                        if(in_array($media, $video_format)) {
+                            ?>
+                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='article_images/<?php echo $rel->image; ?>' type='video/mp4'> </video>"
+                            <?php
+                       }else {
+                           ?>
+                            <img class="card-img-top embed-responsive-item" src="article_images/<?php echo $rel->image; ?>" alt="Card image cap">
+
+                            <?php
+                       }
+
+                     ?>
+                     
+                 </div>
+                <div class="card-body text-left">
+                  <h5 class="card-title article"><b><?php echo $rel->title; ?></h5></b>
+                  <p class="card-text"><small><b>Posted by <?php echo $rel->author; ?>, 
+
+                    <?php 
+
+                    //date_default_timezone_set('Africa/Lagos');
+                     $time_posted = $rel->created_on;
+                    $time = date($time_posted); //now
+                    $timeago = timeago($time);
+                    echo $timeago; 
+                    ?>
+                    </b></small>
+
+                    <div class="star-rating">
+                        <span class="fa divya fa-star" data-rating="1" style="font-size:13px;"></span>
+                        <span class="fa fa-star" data-rating="2" style="font-size:13px;"></span>
+                        <span class="fa fa-star" data-rating="3" style="font-size:13px;"></span>
+                        <span class="fa fa-star" data-rating="4" style="font-size:13px;"></span>
+                        <span class="fa fa-star-half" data-rating="5" style="font-size:13px;"></span>
+                        <span class="fa" style="font-size:13px;">4.9</span>
+                        <input type="hidden" name="whatever3" class="rating-value" value="1">
+				    </div>
+                  
+                   <form action="article-details.php"  method="post">
+                    <input type="hidden" name="edit_id" value="<?php echo $rel->id; ?>">
+                      <button type="hidden" name="btn_edit" class="btn btn-sm stretched-link"></button>
+                </form>
+                </div>
+              </div>
           
+            </div>
+              
+                                
+                            <?php
+                        }
+                    }
+
+                   
+                }
+                
+               ?>  
+               <?php
+            }
+           
+        ?>
        
   
+    </div>
     </div>
 </div>
         </div>
@@ -517,7 +626,7 @@ function timeago($time, $tense='ago'){
             </div>
 
             <div class="col-lg-4 mt-5">
-                <h3 class="text-white mb-5 text-justify">Suscribe</h3>
+                <h3 class="text-white mb-5 text-justify">Subscribe</h3>
                          <?php if (count($errorss) > 0): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <?php foreach($errorss as $error): ?> 
@@ -542,11 +651,11 @@ function timeago($time, $tense='ago'){
                       </div>
                       <?php endif; ?>
 
-                <form action="index.php" method="post">
+                <form action="article-details.php" method="post">
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" name="suscriber_email" value="<?= $email ?? '' ?>" required placeholder="Your email" aria-label="artpient's email" aria-describedby="basic-addon2">
+                        <input type="email" class="form-control" name="subscriber_email" value="<?= $email ?? '' ?>" required placeholder="Your email" aria-label="artpient's email" aria-describedby="basic-addon2">
                         <div class="input-group-append">
-                        <input type="submit" name="suscribe" class="btn btn-danger" value="suscribe">
+                        <input type="submit" name="subscribe" class="btn btn-danger" value="subscribe">
                         </div>
                     </div>
                 </form>
@@ -581,6 +690,7 @@ searchButton.addEventListener('click', () => {
 <script>
     function myFunction() {
      document.getElementById("name").focus();
+     document.getElementById("comment").focus();
 }
 </script>
 </body>

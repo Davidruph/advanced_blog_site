@@ -77,8 +77,17 @@ if(isset($_POST['register'])){
     elseif(strlen($password) > 127) {
         $errors['password'] = "Password maximum length is 127 characters";
     }
-    elseif(!preg_match('/^(?=.*\d)(?=.*[a-zA-Z])(?=.*[!#\$%&\?]).{8,}$/',$password)) {
-      $errors['password'] = "Password must contain a letter, a number and a symbol";
+    elseif (!preg_match("/\d/", $password)) {
+        $errors[] = "Password should contain at least one digit";
+    }
+    elseif (!preg_match("/[a-zA-Z]/", $password)) {
+        $errors[] = "Password should contain at least one Letter";
+    }
+    elseif (!preg_match("/\W/", $password)) {
+        $errors[] = "Password should contain at least one special character";
+    }
+    elseif (preg_match("/\s/", $password)) {
+        $errors[] = "Password should not contain any white space";
     }
     elseif($password != $confirm) {
         $errors['passwordf'] = "Your passwords don't match";
@@ -203,7 +212,7 @@ if(isset($_POST['register'])){
             
                         } 
                     }else {
-                            $errors['username'] = "User not found";
+                            $errors['username'] = "The username and password you have entered doesn't match";
             
                         }
                     }

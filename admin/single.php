@@ -98,7 +98,7 @@ require 'functions/dbconn.php';
                 </div>
             </div>
               <?php
-                  $sql = 'SELECT * FROM suscribers';
+                  $sql = 'SELECT * FROM subscribers';
                   $statement = $connection->prepare($sql);
                   $statement->execute();
                   $suscribers = $statement->fetchAll(PDO::FETCH_OBJ);
