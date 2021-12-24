@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 23, 2021 at 10:46 PM
+-- Generation Time: Dec 24, 2021 at 09:34 AM
 -- Server version: 5.7.36
 -- PHP Version: 8.0.13
 
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `article` (
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `Is_Active` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `article`
@@ -102,7 +102,8 @@ INSERT INTO `article` (`id`, `user_id`, `title`, `author`, `description`, `image
 (5, 1, 'Gaming ideas', 'David Junior', '<p><span style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, Arial, sans-serif; font-size: 14px; text-align: justify;\">\"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam,&nbsp;</span><br></p>', '83b5009e040969ee7b60362ad7426573.jpeg', 'Gamer rounds', '2021-12-20 09:41:18', 1),
 (6, 1, 'Best Practices for Adding Great Games', 'Savic Hernandez', '<p><span style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, Arial, sans-serif; font-size: 14px; text-align: justify;\">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</span><br></p>', 'e46897ba853cdcaca5949deb9e4c45ab.jpeg', 'New coin', '2021-12-20 09:41:28', 1),
 (9, 1, 'Best Practices for Adding Great Games', 'Savic Hernandez', '<p><span style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, Arial, sans-serif; font-size: 14px; text-align: justify;\">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</span><br></p>', 'ddf9c9a45551e218c4018d5c53e9f6bb.jpeg', 'New coin', '2021-12-20 17:07:13', 1),
-(10, 3, 'I am a game lover', 'Lukas Paul', '<p><span style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, Arial, sans-serif; font-size: 14px; text-align: justify;\">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.</span><br></p>', '27095ab35ac9b89abb8f32ad3adef56a.jpg', 'Gamers lounge', '2021-12-23 20:34:19', 1);
+(10, 3, 'I am a game lover', 'Lukas Paul', '<p><span style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, Arial, sans-serif; font-size: 14px; text-align: justify;\">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.</span><br></p>', '27095ab35ac9b89abb8f32ad3adef56a.jpg', 'Gamers lounge', '2021-12-23 20:34:19', 1),
+(14, 3, 'Gaming ideas', 'Paul Mian', '<p>just testing</p>', '27095ab35ac9b89abb8f32ad3adef56a.jpg', 'Gamer rounds', '2021-12-24 08:29:54', 1);
 
 -- --------------------------------------------------------
 
@@ -163,7 +164,7 @@ CREATE TABLE IF NOT EXISTS `log` (
   `log_date_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `status` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `log`
@@ -177,7 +178,9 @@ INSERT INTO `log` (`id`, `user_id`, `log_date_time`, `status`) VALUES
 (7, 11, '2021-12-19 10:44:42', 'In'),
 (8, 1, '2021-12-19 10:48:29', 'Out'),
 (9, 2, '2021-12-19 18:50:16', 'In'),
-(10, 3, '2021-12-23 20:22:52', 'In');
+(10, 3, '2021-12-23 20:22:52', 'In'),
+(11, 3, '2021-12-24 06:01:29', 'Out'),
+(12, 3, '2021-12-24 07:47:39', 'In');
 
 -- --------------------------------------------------------
 
@@ -212,10 +215,19 @@ INSERT INTO `subcategory` (`id`, `category_id`, `subcategory`, `Is_Active`, `cre
 DROP TABLE IF EXISTS `subscribers`;
 CREATE TABLE IF NOT EXISTS `subscribers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `website` varchar(255) DEFAULT NULL,
   `PostingDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `subscribers`
+--
+
+INSERT INTO `subscribers` (`id`, `name`, `email`, `website`, `PostingDate`) VALUES
+(1, 'David junior', 'jun@gmail.com', '', '2021-12-24 07:41:13');
 
 -- --------------------------------------------------------
 
@@ -270,7 +282,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 INSERT INTO `users` (`id`, `username`, `lastname`, `firstname`, `email`, `password`, `verification_code`, `verified_email`, `registered_on`, `role`, `profile_image`) VALUES
 (1, 'Davidrsuph', 'Manny', 'David', 'juniordfffd.dj88@gmail.com', '$2y$10$2EwkB5xX5ZVxvIked0qPiOfpSxO3Oy4Fl0j7ZE6lDuUueOQPzZlc2', 'duNbJ5T03NFajgGh4Je08gVh29798dc1c7DEdbjD07M6hd3cf', NULL, '2021-12-23 21:15:36', 'admin', NULL),
 (2, 'Davidruph2', 'Bontaj', 'Judas', 'jun@gmail.com', '$2y$10$HHWVgmZeD4e/ctqmx5pZY.meH9hEvsFavtoWztRycaupgWW0f/ggW', 'NcuDj0c7MGJ0h8EcFdV0jahTbg4N18639bdd7J32g9D5defh7', NULL, '2021-12-19 19:50:16', 'user', NULL),
-(3, 'Davidruph', 'junior', 'David', 'juniord.dj88@gmail.com', '$2y$10$V3ax4vQQmYS1G5.NKB5CoOn3QSlhDbAVxW0ay2LL.PSqA1cXcm4a2', 'f3hdhddaFcV7N0u6JcD3bNdjT2g98cGE1gJe5bhj7M870409D', NULL, '2021-12-23 22:14:46', 'admin', NULL);
+(3, 'Davidruph', 'junior', 'David', 'juniord.dj88@gmail.com', '$2y$10$V3ax4vQQmYS1G5.NKB5CoOn3QSlhDbAVxW0ay2LL.PSqA1cXcm4a2', 'f3hdhddaFcV7N0u6JcD3bNdjT2g98cGE1gJe5bhj7M870409D', NULL, '2021-12-24 08:47:32', 'user', NULL);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -29,7 +29,7 @@ if (isset($_POST['submit'])) {
     $mail->Port = 465; //587
     $mail->SMTPSecure = 'ssl'; //tls
     $mail->addAddress($user); // Email address where you want to receive emails (you can use any of your gmail address including the gmail address which you used as SMTP server)
-    $mail->setFrom('oneupmeta.ray@gmail.com', 'Updates/Offers'); // Gmail address which you used as SMTP server
+    $mail->setFrom('noreply@1upmeta.com', 'Updates/Offers'); // Gmail address which you used as SMTP server
     $mail->debug = 2;
     $mail->isHTML(true);
     $mail->Subject = 'Message Received From (Oneupmeta)';
@@ -70,7 +70,7 @@ require 'functions/dbconn.php';
     <div class="container-fluid">
         <h1 class="mt-4">Mail a single user </h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Send Mail Page</li>
+            <li class="breadcrumb-item active">News letter Page</li>
         </ol>
          <?php if (count($errors) > 0): ?>
             <div class="alert alert-danger">

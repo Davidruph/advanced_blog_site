@@ -27,26 +27,52 @@ if (isset ($_POST['submit'])){
         $errors['description'] = "All fields are required";
   }else{
 
-  $imgfile = $_FILES["postimage"]["name"];
- 
-  //rename the image file
-  //$imgnewfile = md5($imgfile).$extension;
-  $temp_name = $_FILES['postimage']['tmp_name'];
-  move_uploaded_file($temp_name,"../article_images/".$imgfile);
+  
 
-  $sql = 'INSERT INTO article(user_id, title, author, description, image, category, created_on, Is_Active) VALUES(:user_id, :title, :author, :description, :imgnewfile, :category, :created_on, :status)';
-  $statement = $connection->prepare($sql);
-
-  if ($statement->execute([':user_id' => $id, ':title' => $article_title, ':author' => $author, ':description' => $article_description, ':category' => $category, ':imgnewfile' => $imgfile, ':created_on' => $created_on, ':status' => $status])) {
-    // Code for move image into directory
-    //move_uploaded_file($temp_name,"article_images/".$imgnewfile);
-    $success['data'] = 'Article created successfully';
-  }else{
-    $errors['data'] = 'Ooops, an error occured';
-  }
+  $targetDir = "../article_images/"; 
+  $allowTypes = array('jpg','png','jpeg','gif','JPG', 'JPEG', 'GIF', 'PNG', 'webp','mp4','mov'); 
+   
+  $statusMsg = $errorMsg = $insertValuesSQL = $errorUpload = $errorUploadType = ''; 
+  $fileNames = array_filter($_FILES['postimage']['name']); 
+  if(!empty($fileNames)){ 
+      foreach($_FILES['postimage']['name'] as $key=>$val){ 
+          // File upload path 
+          $fileName = basename($_FILES['postimage']['name'][$key]); 
+          $targetFilePath = $targetDir . $fileName; 
+           
+          // Check whether file type is valid 
+          $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION); 
+          if(in_array($fileType, $allowTypes)){ 
+              // Upload file to server 
+              if(move_uploaded_file($_FILES["postimage"]["tmp_name"][$key], $targetFilePath)){ 
+                  // Image db insert sql 
+                 
+              }else{ 
+                  $errorUpload .= $_FILES['postimage']['name'][$key].' | '; 
+              } 
+          }else{ 
+              $errorUploadType .= $_FILES['postimage']['name'][$key].' | '; 
+          } 
+      } 
+      // Error message 
+      $errorUpload = !empty($errorUpload)?'Upload Error: '.trim($errorUpload, ' | '):''; 
+      $errorUploadType = !empty($errorUploadType)?'File Type Error: '.trim($errorUploadType, ' | '):''; 
+      $errorMsg = !empty($errorUpload)?'<br/>'.$errorUpload.'<br/>'.$errorUploadType:'<br/>'.$errorUploadType; 
+    
+      $sql = 'INSERT INTO article(user_id, title, author, description, image, category, created_on, Is_Active) VALUES(:user_id, :title, :author, :description, :imgnewfile, :category, :created_on, :status)';
+      $statement = $connection->prepare($sql);
+    
+      if ($statement->execute([':user_id' => $id, ':title' => $article_title, ':author' => $author, ':description' => $article_description, ':category' => $category, ':imgnewfile' => $fileName, ':created_on' => $created_on, ':status' => $status])) {
+        // Code for move image into directory
+        //move_uploaded_file($temp_name,"article_images/".$imgnewfile);
+        $success['data'] = 'Article created successfully';
+      }else{
+        $errors['data'] = 'Ooops, an error occured';
+      }
 
  }
  }
+}
 
 ?>
 
@@ -82,9 +108,9 @@ if (isset ($_POST['submit'])){
         <div class="col-md-12">
         <form class="form-horizontal" name="recipe-form" method="post" enctype="multipart/form-data">
             <div class="form-group">
-                <label class="col-md-5 control-label">Feature Image/video</label>
+                <label class="col-md-5 control-label">Feature Image</label>
                 <div class="col-md-10">
-                    <input type="file" class="form-control-file" id="postimage" name="postimage"  required>
+                    <input type="file" class="form-control-file" id="postimage" name="postimage[]" multiple required>
                 </div>
             </div>
 

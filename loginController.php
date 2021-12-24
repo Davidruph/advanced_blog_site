@@ -73,21 +73,11 @@ if(isset($_POST['submit'])){
                         $log_date_time = date("Y-m-d H:i:s", time());
                         $status = "In";
 
-                        $log_query = mysqli_query($conn, "SELECT * FROM log WHERE user_id='$id'");
-                        if(mysqli_num_rows($log_query) > 0){
-
-                            $update_query = mysqli_query($conn, "UPDATE log SET user_id = '$id', log_date_time = '$log_date_time', status = '$status' WHERE user_id = '$id'");
-                            if($update_query){
-                                header('location:index.php');
-                            }
-
-                        }else{
-                            //update log details
                             $log_query = mysqli_query($conn, "INSERT INTO log (user_id, log_date_time, status) VALUES('$id','$log_date_time','$status')");
                             if($log_query){
-                                header('location:user/index.php');
+                                header('location:index.php');
                             }
-                        }
+                        
 
                     }
                 

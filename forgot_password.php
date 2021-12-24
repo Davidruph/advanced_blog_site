@@ -61,7 +61,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $mail->Port = 465; //587
             $mail->SMTPSecure = 'ssl'; //tls
               $mail->addAddress($email); // Email address where you want to receive emails (you can use any of your gmail address including the gmail address which you used as SMTP server)
-              $mail->setFrom('oneupmeta.ray@gmail.com', 'Reset Password'); // Gmail address which you used as SMTP server
+              $mail->setFrom('noreply@1upmeta.com', 'Reset Password'); // Gmail address which you used as SMTP server
               //$mail->SMTPDebug = 2;
               $mail->isHTML(true);
               $mail->Subject = 'password reset link';

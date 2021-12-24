@@ -11,7 +11,7 @@
 	$status = "Out";
 
 	//update log details
-    $query = mysqli_query($conn, "UPDATE log SET user_id = '$id', log_date_time = '$log_date_time', status = '$status' WHERE user_id = '$id'");
+    $query = mysqli_query($conn, "INSERT INTO log (user_id, log_date_time, status) VALUES('$id','$log_date_time','$status')");
     if ($query) {
     	session_destroy();
 		header('location: signin.php');

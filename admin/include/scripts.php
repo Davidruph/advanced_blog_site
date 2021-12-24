@@ -13,5 +13,19 @@ $(document).ready(function() {
 });
 
 </script>
+
+<script>
+   $(document).click(function(){
+        if(typeof timeOutObj != "undefined") {
+            clearTimeout(timeOutObj);
+        }
+
+        timeOutObj = setTimeout(function(){ 
+            localStorage.clear();
+            window.location = "../logout.php";
+        }, 1800000);   //will expire after thirty minutes
+
+   });
+</script>
 </body>
 </html>

@@ -134,7 +134,7 @@ if(isset($_POST['register'])){
                     $mail->Port = 465; //587
                     $mail->SMTPSecure = 'ssl'; //tls
                     $mail->addAddress($email); // Email address where you want to receive emails (you can use any of your gmail address including the gmail address which you used as SMTP server)
-                    $mail->setFrom('oneupmeta.ray@gmail.com', 'Email verification'); // Gmail address which you used as SMTP server
+                    $mail->setFrom('noreply@1upmeta.com', 'Email verification'); // Gmail address which you used as SMTP server
                     //$mail->debug = 2;
                     $mail->isHTML(true);
                     $mail->Subject = 'Message Received From (oneupmeta)';
@@ -188,21 +188,11 @@ if(isset($_POST['register'])){
                                 $log_date_time = date("Y-m-d H:i:s", time());
                                 $status = "In";
 
-                                $log_query = mysqli_query($conn, "SELECT * FROM log WHERE user_id='$id'");
-                                if(mysqli_num_rows($log_query) > 0){
-
-                                    $update_query = mysqli_query($conn, "UPDATE log SET user_id = '$id', log_date_time = '$log_date_time', status = '$status' WHERE user_id = '$id'");
-                                    if($update_query){
-                                        header('location:user/index.php');
-                                    }
-
-                                }else{
-                                    //update log details
-                                    $log_query = mysqli_query($conn, "INSERT INTO log (user_id, log_date_time, status) VALUES('$id','$log_date_time','$status')");
+                                $log_query = mysqli_query($conn, "INSERT INTO log (user_id, log_date_time, status) VALUES('$id','$log_date_time','$status')");
                                     if($log_query){
                                         header('location:index.php');
                                     }
-                                }
+                                
 
                             }
                             

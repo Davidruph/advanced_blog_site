@@ -8,7 +8,7 @@
     $user = $_SESSION['username'];
     $lastname = $_SESSION['lastname'];
     $firstname = $_SESSION['firstname'];
-    $fullname = $firstname. "  " .$lastname;
+    $fullname = $firstname." ".$lastname;
     $email = $_SESSION['email'];  
     $profile_image = $_SESSION['profile_image'];  
     }    
@@ -64,17 +64,15 @@ if (isset($_POST['leave_comment'])) {
         if(mysqli_num_rows($query) > 0){
            $errorss['pass'] = "You have already made a comment for this post";
         }else{
-
-            $qry = 'INSERT INTO tblcomments(post_id, name, email, comments, PostingDate) VALUES(:post_id, :name, :email, :comments, :postingdate)';
-            $statement = $connection->prepare($qry);
-              if ($statement->execute([':post_id' => $post_id, ':name' => $name, ':email' => $email, ':comments' => $comment, ':postingdate' => $postingdate])) {
-                $successs['data'] = 'Commented successfully';
-                header("Location: index.php");
-
-              }else{
-                $errorss['data'] = 'Ooops, an error occured';
-              }
-        }
+            $sql = 'INSERT INTO subscribers(name, email, website, PostingDate) VALUES(:name, :email, :website, :postingdate)';
+            $statement = $connection->prepare($sql);
+  
+            if ($statement->execute([':name' => $name, ':email' => $subscriber_email, ':website' => $website, ':postingdate' => $postingdate])) {
+              $successs['data'] = 'Subscribed successfully';
+            }else{
+              $errorss['data'] = 'Ooops, an error occured';
+            }
+          }
 
     }
 }
@@ -192,6 +190,20 @@ function timeago($time, $tense='ago'){
             <li class="nav-item line">
                 <a class="nav-link mb-2 text-white font-weight-bold" href="#">Commentaries</a>
             </li>
+
+            <?php
+                if(!isset($_SESSION['email'])) {
+                    ?>
+                         <li class="nav-item line">
+                            <a class="nav-link mb-2 text-white font-weight-bold" href="signin.php">Signin</a>
+                        </li>
+
+                        <li class="nav-item line">
+                            <a class="nav-link mb-2 text-white font-weight-bold" href="signup.php">Sign Up</a>
+                        </li>
+                    <?php
+                }
+            ?>
 
         </ul>
 
@@ -429,7 +441,7 @@ function timeago($time, $tense='ago'){
                       </div>
 
                     
-                    <button onclick="myFunction()" id="comment_button" class="btn btn-outline-primary">add comment</button>
+                    <button onclick="myFunction()" id="comment_button" class="btn btn-outline-primary">Start Discussion</button>
                   </div>
                 </div>
 
@@ -652,12 +664,17 @@ function timeago($time, $tense='ago'){
                       <?php endif; ?>
 
                 <form action="article-details.php" method="post">
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control" name="subscriber_email" value="<?= $email ?? '' ?>" required placeholder="Your email" aria-label="artpient's email" aria-describedby="basic-addon2">
-                        <div class="input-group-append">
-                        <input type="submit" name="subscribe" class="btn btn-danger" value="subscribe">
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <input type="text" class="form-control form-control-sm" name="name" placeholder = "Your name" required value="<?= $fullname ?? '' ?>">
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control form-control-sm" name="subscriber_email" placeholder = "Your email" required value="<?= $email ?? '' ?>">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control form-control-sm" name="website" placeholder = "Your website (Optional)">
+                </div>
+                <input type="submit" name="subscribe" class="btn btn-primary btn-sm mb-2" value = "subscribe">
+                    
                 </form>
 
                 <p class="text-justify text-white mt-2 mb-2">Get latest updates and offers.</p>
@@ -675,6 +692,13 @@ function timeago($time, $tense='ago'){
         </div>
     </div>
 </div>
+<div class="container-fluid bg-dark">
+    <div class="row justify-content-center">
+        <?php foreach($affiliate as $aff): ?>
+            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn bg-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["link"]; ?></a>
+        <?php endforeach; ?>
+    </div>
+</div>
 
 <script src="js/jquery-3.5.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -689,9 +713,23 @@ searchButton.addEventListener('click', () => {
 
 <script>
     function myFunction() {
-     document.getElementById("name").focus();
+    //  document.getElementById("name").focus();
      document.getElementById("comment").focus();
 }
+</script>
+
+<script>
+   $(document).click(function(){
+        if(typeof timeOutObj != "undefined") {
+            clearTimeout(timeOutObj);
+        }
+
+        timeOutObj = setTimeout(function(){ 
+            localStorage.clear();
+            window.location = "/logout.php";
+        }, 1800000);   //will expire after thirty minutes
+
+   });
 </script>
 </body>
 </html>
