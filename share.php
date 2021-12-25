@@ -20,17 +20,22 @@
 
     //if suscribe button is clicked
     if (isset($_POST['subscribe'])) {
+        $name = $_POST['name'];
         $subscriber_email = $_POST['subscriber_email'];
+        $website = $_POST['website'];
         $postingdate = date("Y-m-d H:i:s", time());
+        if ($name === "" || $subscriber_email === "") {
+            $errorss['pass'] = "the name and email field are both required";
+        }
     
         $query = mysqli_query($conn, "SELECT email FROM subscribers WHERE email='$subscriber_email'");
             if(mysqli_num_rows($query) > 0){
                $errorss['pass'] = "Hi, you've already subscribed";
             }else{
-              $sql = 'INSERT INTO subscribers(email, PostingDate) VALUES(:email, :postingdate)';
+              $sql = 'INSERT INTO subscribers(name, email, website, PostingDate) VALUES(:name, :email, :website, :postingdate)';
               $statement = $connection->prepare($sql);
     
-              if ($statement->execute([':email' => $subscriber_email, ':postingdate' => $postingdate])) {
+              if ($statement->execute([':name' => $name, ':email' => $subscriber_email, ':website' => $website, ':postingdate' => $postingdate])) {
                 $successs['data'] = 'Subscribed successfully';
               }else{
                 $errorss['data'] = 'Ooops, an error occured';
@@ -47,30 +52,31 @@ if (isset($_POST['leave_comment'])) {
     $post_id = $_POST['post_id'];
     // $name = $_POST['name'];
     // $email = $_POST['email'];
-    $comment = $_POST['comment'];
+    $comments = $_POST['comment'];
     $postingdate = date("Y-m-d H:i:s", time());
 
     //check if user is logged in
     if(!isset($_SESSION['email'])) {
-        header("Location: login.php");
+        header("Location: signup.php");
     }
     else{
 
     //initialize the session
 
     $id = $_SESSION['user'];
-    $fullname = $_SESSION['fullname'];
+    $name = $fullname;
     $email = $_SESSION['email'];
 
     $query = mysqli_query($conn, "SELECT post_id, email FROM tblcomments WHERE email='$email' AND post_id = $post_id");
         if(mysqli_num_rows($query) > 0){
            $errorss['pass'] = "You have already made a comment for this post";
         }else{
-            $sql = 'INSERT INTO subscribers(name, email, website, PostingDate) VALUES(:name, :email, :website, :postingdate)';
+            $sql = 'INSERT INTO tblcomments(post_id, name, email, comments, PostingDate) VALUES(:post_id, :name, :email, :comments, :postingdate)';
             $statement = $connection->prepare($sql);
   
-            if ($statement->execute([':name' => $name, ':email' => $subscriber_email, ':website' => $website, ':postingdate' => $postingdate])) {
-              $successs['data'] = 'Subscribed successfully';
+            if ($statement->execute([':post_id' => $post_id, ':name' => $name, ':email' => $email, ':comments' => $comments, ':postingdate' => $postingdate])) {
+              $successs['data'] = 'commented successfully';
+              header("Location: index.php");
             }else{
               $errorss['data'] = 'Ooops, an error occured';
             }
