@@ -136,7 +136,33 @@ function timeago($time, $tense='ago'){
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <link rel="stylesheet" type="text/css" href="ratings.css">
-
+  <script type="text/javascript">
+function addBookmark(url, title){
+if (!url) {url = window.location}
+	if (!title) {title = document.title}
+	var browser=navigator.userAgent.toLowerCase();
+	if (window.sidebar) { // Mozilla, Firefox, Netscape
+		window.sidebar.addPanel(title, url,"");
+	} else if( window.external) { // IE or chrome
+		if (browser.indexOf('chrome')==-1){ // ie
+			window.external.AddFavorite( url, title);
+		} else { // chrome
+			alert('Please Press CTRL+D (or Command+D for macs) to bookmark this page');
+		}
+	}
+	else if(window.opera && window.print) { // Opera - automatically adds to sidebar if rel=sidebar in the tag
+		return true;
+	}
+	else if (browser.indexOf('konqueror')!=-1) { // Konqueror
+		alert('Please press CTRL+B to bookmark this page.');
+	}
+	else if (browser.indexOf('webkit')!=-1){ // safari
+		alert('Please press CTRL+B (or Command+D for macs) to bookmark this page.');
+	} else {
+		alert('Your browser cannot add bookmarks using this link. Please add this link manually.')
+	}
+}
+</script>
 </head>
 <body>
 <div class="container-fluid bg-warning">
@@ -304,14 +330,20 @@ function timeago($time, $tense='ago'){
                     <div class="row ml-5">
                         <?php
                             $article_id = $art->id;
+                            $article_title = $art->title;
                             $site_url = "http://localhost/fiverr/oneupmeta/share.php?article_id=$article_id";
                         ?>
-                    <a href="#" target="_blank" title="share to facebook" class="btn btn-primary mr-2"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" target="_blank" title="share to twitter" class="btn btn-info mr-2"><i class="fab fa-twitter"></i></a>
-                    <a href="#" title="copy link" class="btn btn-warning mr-2"><i class="fa fa-link"></i></a>
-                    <a href="#" target="_blank" title="share to email" class="btn btn-dark mr-2"><i class="fa fa-envelope"></i></a>
-                    <a href="#" target="_blank" title="share to telegram" class="btn btn-info mr-2"><i class="fab fa-telegram"></i></a>
-                    <a href="#" target="_blank" title="add to bookmarks" class="btn btn-default icon mr-2"><i class="fa fa-bookmark"></i></a>
+                    <a href="https://www.facebook.com/sharer.php?u=<?=$site_url?>" target="_blank" title="share to facebook" class="btn btn-primary mr-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://twitter.com/share?url=<?=$site_url?>&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" target="_blank" title="share to twitter" class="btn btn-info mr-2"><i class="fab fa-twitter"></i></a>
+
+                   <input type="hidden" value="<?=$site_url?>" id="myInput">
+                    <button title="copy link" class="btn btn-warning mr-2" title="Copy to clipboard" onclick="myFunction()"><i class="fa fa-link" ></i></button>
+
+                    <a href="mailto:?Subject=<?=$site_url?>&amp;Body=I%20saw%20this%20and%20thought%20of%20you!%20 <?=$site_url?>" target="_blank" title="share to email" class="btn btn-dark mr-2"><i class="fa fa-envelope"></i></a>
+
+                    <a href="https://telegram.me/share/url?url=<?=$site_url?>" target="_blank" title="share to telegram" class="btn btn-info mr-2"><i class="fab fa-telegram"></i></a>
+
+                    <a href="#"  onclick="addBookmark('<?=$site_url?>', '<?=$article_title?>');" title="add to bookmarks" class="btn btn-default icon mr-2"><i class="fa fa-bookmark"></i></a>
                     </div>
                     </fieldset>
                     
@@ -441,7 +473,7 @@ function timeago($time, $tense='ago'){
                       </div>
 
                     
-                    <button onclick="myFunction()" id="comment_button" class="btn btn-outline-primary">Start Discussion</button>
+                    <button onclick="myyFunction()" id="comment_button" class="btn btn-outline-primary">Start Discussion</button>
                   </div>
                 </div>
 
@@ -702,17 +734,9 @@ function timeago($time, $tense='ago'){
 
 <script src="js/jquery-3.5.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script>
-    const searchButton = document.getElementById('search-button');
-const searchInput = document.getElementById('search-input');
-searchButton.addEventListener('click', () => {
-  const inputValue = searchInput.value;
-  alert(inputValue);
-});
-</script>
 
 <script>
-    function myFunction() {
+    function myyFunction() {
     //  document.getElementById("name").focus();
      document.getElementById("comment").focus();
 }
@@ -731,5 +755,23 @@ searchButton.addEventListener('click', () => {
 
    });
 </script>
+<script>
+function myFunction() {
+  /* Get the text field */
+  var copyText = document.getElementById("myInput");
+
+  /* Select the text field */
+  //copyText.select();
+  //copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+   /* Copy the text inside the text field */
+  navigator.clipboard.writeText(copyText.value);
+
+  /* Alert the copied text */
+//   alert("Copied the text: " + copyText.value);
+  alert("Copied successfully!");
+}
+</script>
+
 </body>
 </html>
