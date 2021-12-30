@@ -82,6 +82,17 @@
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="add-category.php">Add Category</a>
                                     <a class="nav-link" href="manage-categories.php">Manage Category</a>
+                                    
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#coll13" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-list-alt fa-fw"></i></div>
+                                Subcategory
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="coll13" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="add-subcategory.php">Add Subcategory</a>
                                     <a class="nav-link" href="manage-subcategories.php">Manage Subcategory</a>
 

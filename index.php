@@ -58,10 +58,10 @@ $statement = $connection->prepare($sql);
 $statement->execute();
 $announcement = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-$sql = 'SELECT * FROM article WHERE Is_Active=1 ORDER BY id DESC LIMIT 8';
-$statement = $connection->prepare($sql);
-$statement->execute();
-$article = $statement->fetchAll(PDO::FETCH_ASSOC);
+$post = mysqli_query($conn, 'SELECT * FROM article WHERE Is_Active=1 ORDER BY id DESC LIMIT 8');
+// $statement = $connection->prepare($sql);
+// $statement->execute();
+// $article = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 function timeago($time, $tense='ago'){
     static $periods = array('year', 'month', 'day', 'hour', 'minute', 'second');
@@ -117,7 +117,7 @@ function timeago($time, $tense='ago'){
 <div class="container-fluid bg-warning">
     <div class="row justify-content-center">
         <?php foreach($affiliate as $aff): ?>
-            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn btn-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["link"]; ?></a>
+            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn btn-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["alt"]; ?></a>
         <?php endforeach; ?>
     </div>
 </div>
@@ -269,36 +269,67 @@ function timeago($time, $tense='ago'){
     <div class="row">
             <div class="col-lg-10">
                 <div class="row d-flex justify-content-center justify-content-md-start">
-                <?php foreach($article as $art): //php fetch blog post from database?>
+                <?php
+                        if(mysqli_num_rows($post) > 0)
+                        {
+                        
+                        while($row = mysqli_fetch_assoc($post))
+                        {
+                            $media = '';
+                            $temp = array();
+                            $row['image']=trim($row['image'], '/,');
+                            $temp   = explode(',', $row['image']);
+                            $temp   = array_filter($temp);
+                        $images = array();
+                        foreach($temp as $image){
+                            $images[]="article_images/".trim( str_replace(array('[',']') ,"" ,$image ) );
+                        }?>
         <div class="col-lg-3 col-md-3 col-sm-5" id="blogs">
             <div class="card-deck h-100">
               <div class="card row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                 <div class="embed-responsive embed-responsive-4by3">
-                     <?php
-                        $media = $art['image'];
-                        $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
-                        if(in_array($media, $video_format)) {
-                            ?>
-                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='article_images/<?php echo $art['image']; ?>' type='video/mp4'> </video>"
-                            <?php
-                       }else {
-                           ?>
-                            <img class="card-img-top embed-responsive-item" src="article_images/<?php echo $art['image']; ?>" alt="Card image cap">
+                  
+                 <!-- <div class="embed-responsive embed-responsive-4by3"> -->
+                 <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                        <img class="d-block w-100" src="<?php echo $images[0];?>" alt="Card image cap" style=" height: 30vh;">
+                        </div>
+                        <?php
+                            if (sizeof($images) > 1) {
+                                ?>
+                                    <div class="carousel-item">
+                                    <img class="d-block w-100" src="<?php echo $images[1];?>" alt="Card image cap" style=" height: 30vh;">
+                                    </div>
+                                <?php
+                            }
+                        ?>
 
-                            <?php
-                       }
-
-                     ?>
-                     
-                 </div>
+                        <?php
+                            if (sizeof($images) > 2) {
+                                ?>
+                                    <div class="carousel-item">
+                                    <img class="d-block w-100" src="<?php echo $images[2];?>" alt="Card image cap" style=" height: 30vh;">
+                                    </div>
+                                <?php
+                            }
+                        ?>
+                        
+                        
+                    </div>
+                    </div>
+                        
+                      
+                      
+                 <!-- </div> -->
                 <div class="card-body text-left">
-                  <h5 class="card-title article"><b><?php echo $art['title']; ?></h5></b>
-                  <p class="card-text"><small><b>Posted by <?php echo $art['author']; ?>, 
+                  <h5 class="card-text article"><b><?php echo $row['title']; ?></h5></b>
+                  <p class="card-text"><small><b><?php echo $row['catchy_phrase']; ?></b></small>
+                  <p class="card-text"><small><b>Posted by <?php echo $row['author']; ?>, 
 
                     <?php 
 
                     //date_default_timezone_set('Africa/Lagos');
-                     $time_posted = $art['created_on'];
+                     $time_posted = $row['created_on'];
                     $time = date($time_posted); //now
                     $timeago = timeago($time);
                     echo $timeago; 
@@ -316,14 +347,16 @@ function timeago($time, $tense='ago'){
 				    </div>
                   
                    <form action="article-details.php"  method="post">
-                    <input type="hidden" name="edit_id" value="<?php echo $art["id"]; ?>">
+                    <input type="hidden" name="edit_id" value="<?php echo $row["id"]; ?>">
                       <button type="hidden" name="btn_edit" class="btn btn-sm stretched-link"></button>
                 </form>
                 </div>
               </div>
           </div>
         </div>
-        <?php endforeach; ?>
+        <?php }
+                        }
+                     ?>
                 </div>
             </div>
             <div class="col-lg-2 col-md-12">
@@ -448,7 +481,7 @@ function timeago($time, $tense='ago'){
 <div class="container-fluid bg-dark">
     <div class="row justify-content-center">
         <?php foreach($affiliate as $aff): ?>
-            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn bg-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["link"]; ?></a>
+            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn bg-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["alt"]; ?></a>
         <?php endforeach; ?>
     </div>
 </div>
@@ -465,17 +498,41 @@ searchButton.addEventListener('click', () => {
 </script>
 
 <script>
-   $(document).click(function(){
-        if(typeof timeOutObj != "undefined") {
-            clearTimeout(timeOutObj);
-        }
+   
+   (function() {
+    const idleDurationSecs = 1800;
+    const redirectUrl = 'logout.php';
+    let idleTimeout;
 
-        timeOutObj = setTimeout(function(){ 
-            localStorage.clear();
-            window.location = "/logout.php";
-        }, 1800000);   //will expire after thirty minutes
+    const resetIdleTimeout = function() {
+        if(idleTimeout) clearTimeout(idleTimeout);
+        idleTimeout = setTimeout(() => location.href = redirectUrl, idleDurationSecs * 1000);
+    };
+	
+	// Key events for reset time
+    resetIdleTimeout();
+    window.onmousemove = resetIdleTimeout;
+    window.onkeypress = resetIdleTimeout;
+    window.click = resetIdleTimeout;
+    window.onclick = resetIdleTimeout;
+    window.touchstart = resetIdleTimeout;
+    window.onfocus = resetIdleTimeout;
+    window.onchange = resetIdleTimeout;
+    window.onmouseover = resetIdleTimeout;
+    window.onmouseout = resetIdleTimeout;
+    window.onmousemove = resetIdleTimeout;
+    window.onmousedown = resetIdleTimeout;
+    window.onmouseup = resetIdleTimeout;
+    window.onkeypress = resetIdleTimeout;
+    window.onkeydown = resetIdleTimeout;
+    window.onkeyup = resetIdleTimeout;
+    window.onsubmit = resetIdleTimeout;
+    window.onreset = resetIdleTimeout;
+    window.onselect = resetIdleTimeout;
+    window.onscroll = resetIdleTimeout;
 
-   });
+})();
+</script>
 </script>
 </body>
 </html>

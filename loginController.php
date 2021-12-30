@@ -54,8 +54,18 @@ if(isset($_POST['submit'])){
                         $_SESSION['email'] = $email;
                         $_SESSION['role'] = $role;
                         $_SESSION['profile_image'] = $profile_image;
-                        header('location:admin/index.php');
-                        exit();
+
+                        //get user id from logged in session
+                        $id = $_SESSION['user'];
+                        $log_date_time = date("Y-m-d H:i:s", time());
+                        $status = "In";
+
+                            $log_query = mysqli_query($conn, "INSERT INTO log (user_id, log_date_time, status) VALUES('$id','$log_date_time','$status')");
+                            if($log_query){
+                                header('location:admin/index.php');
+                                exit();
+                            }
+                        
                     }
                     if($query && $role === "user"){
                         //declare session

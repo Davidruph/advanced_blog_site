@@ -9,10 +9,16 @@ require 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
 require 'vendor/phpmailer/phpmailer/src/SMTP.php';
 require 'vendor/phpmailer/phpmailer/src/Exception.php';
 
+//database connection
 require 'dbconn.php';
+
+    //error array for outputing errors
     $errors = array();
+
+    //success array for outputing success messages
     $success = array();
 
+    //if sign up button is clicked
 if(isset($_POST['register'])){
     
     //variables
@@ -52,49 +58,60 @@ if(isset($_POST['register'])){
     ';
 
 
-    //validate
+    //validate if any empty field
     if( $user_name === "" || $lastname === "" || $firstname === "" || $email === "" || $password === "" || $confirm === "") {
          $errors['fields'] = "All fields are Required";
     }
+    //if the username user entered falls in list of reserved words, show error
     elseif(in_array($user_name, $reserved)) {
          $errors['user_name'] = "Sorry you cannot use this username";
     }
+    //if username lesser than 8 characters
     elseif(strlen($user_name) < 8) {
         $errors['user_name'] = "Username cannot be lower than 8 characters";
     }
+    //if username greater than 15 characters
     elseif(strlen($user_name) > 15) {
         $errors['user_name'] = "Username cannot exceed 15 characters";
     }
+    //if username has non alphanumeric and symbols
     elseif(!preg_match('/^[a-zA-Z0-9_]+$/',$user_name)) {
       $errors['user_name'] = " Username can only contain alphanumeric characters and underscores";
     }
+    //check for valid email
     elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
          $errors['email'] = "Email is invalid";
     }
+    //check password if lessser than 8 characters
     elseif(strlen($password) < 8) {
         $errors['password'] = "Password cannot be lower than 8 characters";
     }
+    //check password if greater than 127 characters
     elseif(strlen($password) > 127) {
         $errors['password'] = "Password maximum length is 127 characters";
     }
+    //if password does not contain at least one digit
     elseif (!preg_match("/\d/", $password)) {
-        $errors[] = "Password should contain at least one digit";
+        $errors['password'] = "Password should contain at least one digit";
     }
+    //if password does not contain at least one letter
     elseif (!preg_match("/[a-zA-Z]/", $password)) {
-        $errors[] = "Password should contain at least one Letter";
+        $errors['password'] = "Password should contain at least one Letter";
     }
+    //if password does not contain at least one special character
     elseif (!preg_match("/\W/", $password)) {
-        $errors[] = "Password should contain at least one special character";
+        $errors['password'] = "Password should contain at least one special character";
     }
+    //if password has any white space
     elseif (preg_match("/\s/", $password)) {
-        $errors[] = "Password should not contain any white space";
+        $errors['password'] = "Password should not contain any white space";
     }
+    //if password not equal to confirm password
     elseif($password != $confirm) {
         $errors['passwordf'] = "Your passwords don't match";
     }
-
-
     else {
+        //check if captcha was clicked and verified
         if($captcha === "") {
                 $errors['captcha'] = "Captcha is required";
             }

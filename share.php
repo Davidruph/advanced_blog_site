@@ -18,6 +18,9 @@
     $errorss = array();
     $successs = array();
 
+    $errors = array();
+    $success = array();
+
     //if suscribe button is clicked
     if (isset($_POST['subscribe'])) {
         $name = $_POST['name'];
@@ -79,6 +82,39 @@ if (isset($_POST['leave_comment'])) {
               header("Location: index.php");
             }else{
               $errorss['data'] = 'Ooops, an error occured';
+            }
+          }
+
+    }
+}
+
+if (isset($_POST['reply_comment'])) {
+    $comment_id = $_POST['comment_id'];
+    $post_id = $_POST['post_id'];
+    $user_id = $_POST['user_id'];
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $commentbox = $_POST['commentbox'];
+    $replied_on = date("Y-m-d H:i:s", time());
+
+    //check if user is logged in
+    if(!isset($_SESSION['email'])) {
+        header("Location: signup.php");
+    }
+    else{
+
+    $query = mysqli_query($conn, "SELECT post_id, email FROM replies WHERE email='$email' AND post_id = $post_id AND comment_id = $comment_id");
+        if(mysqli_num_rows($query) > 0){
+           $errors['pass'] = "You have already made a reply for this comment <a class='ml-3' href='index.php'>view post</a>";
+        }else{
+            $reply = 'INSERT INTO replies(comment_id, post_id, user_id, name, email, reply_comment, replied_on) VALUES(:comment_id, :post_id, :user_id, :name, :email, :commentbox, :replied_on)';
+            $statement = $connection->prepare($reply);
+  
+            if ($statement->execute([':comment_id' => $comment_id, ':post_id' => $post_id, ':user_id' => $user_id, ':name' => $name, ':email' => $email, ':commentbox' => $commentbox, ':replied_on' => $replied_on])) {
+              $success['data'] = "you've replied to the comment successfully <a class='ml-3' href='index.php'>view other post</a>";
+              //header("Location: article-details.php");
+            }else{
+              $errors['data'] = 'Ooops, an error occured';
             }
           }
 
@@ -282,7 +318,32 @@ function timeago($time, $tense='ago'){
         </ol>
     </div>
     <div class="row">
-    <div class="col-md-8">
+    <div class="container w-75">
+        <?php if (count($errors) > 0): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?php foreach($errors as $erro): ?> 
+        <li class="text-danger"><?php echo $erro; ?></li>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+            
+        <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (count($success) > 0): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?php foreach($success as $succe): ?> 
+        <li class="text-success"><?php echo $succe; ?></li>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+            
+        <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+        </div>
+    <div class="col-md-7">
 
 <?php
     if (isset($_GET['article_id'])) {
@@ -295,6 +356,15 @@ function timeago($time, $tense='ago'){
 
       
       foreach ($article as $art) {
+        $media = $art->image;
+        $temp = array();
+        $media=trim($media, '/,');
+        $temp   = explode(',', $media);
+        $temp   = array_filter($temp);
+        $images = array();
+        foreach($temp as $image){
+        $images[]="article_images/".trim( str_replace(array('[',']') ,"" ,$image ) );
+        }
         ?>
 
            <div class="card mb-4">
@@ -302,24 +372,37 @@ function timeago($time, $tense='ago'){
                 <div class="card-body">
                   <h2 class="card-title"><b><?php echo $art->title;?></b></h2>
                   <p><b>Category : </b><?php echo htmlentities($art->category);?><br>
-                  <small><p><b><a href="#"><?php echo date("F j, Y", strtotime($art->created_on)); ?></a>. Posted by <?php echo htmlentities($art->author);?></b> &nbsp; <a href="#">Comments (<?php $article_post_id = $art->id;$count=$connection->prepare("SELECT post_id FROM tblcomments WHERE post_id = $article_post_id");$count->execute();$comments=$count->rowCount();echo $comments; ?>)</a> &nbsp; <a href="#">Notify Me</a></p></small>
+                  <small><p><b><a href="#"><?php echo date("F j, Y", strtotime($art->created_on)); ?></a>. Posted by <?php echo htmlentities($art->author);?></b> &nbsp; <button class="btn btn-sm btn-link" onclick="comment_view()">Comments (<?php $article_post_id = $art->id;$count=$connection->prepare("SELECT post_id FROM tblcomments WHERE post_id = $article_post_id");$count->execute();$comments=$count->rowCount();echo $comments; ?>)</button> &nbsp; <a href="#">Notify Me</a></p></small>
                     
                     <hr />
-                    <?php
-                        $media = $art->image;
-                        $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
-                        if(in_array($media, $video_format)) {
-                            ?>
-                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='article_images/<?php echo $art->image ?>' type='video/mp4'> </video>"
-                            <?php
-                       }else {
-                           ?>
-                           <img class="img-fluid rounded w-100" style="height: 300px;" src="article_images/<?php echo htmlentities($art->image);?>" alt="<?php echo htmlentities($art->title);?>">
+                    <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                        <img class="d-block w-100" src="<?php echo $images[0];?>" alt="Card image cap" style=" height: 50vh;">
+                        </div>
+                        <?php
+                            if (sizeof($images) > 1) {
+                                ?>
+                                    <div class="carousel-item">
+                                    <img class="d-block w-100" src="<?php echo $images[1];?>" alt="Card image cap" style=" height: 50vh;">
+                                    </div>
+                                <?php
+                            }
+                        ?>
 
-                            <?php
-                       }
-
-                     ?>
+                        <?php
+                            if (sizeof($images) > 2) {
+                                ?>
+                                    <div class="carousel-item">
+                                    <img class="d-block w-100" src="<?php echo $images[2];?>" alt="Card image cap" style=" height: 50vh;">
+                                    </div>
+                                <?php
+                            }
+                        ?>
+                        
+                        
+                    </div>
+                    </div>
                     
 
                                 <p class="card-text"><?php 
@@ -338,7 +421,7 @@ function timeago($time, $tense='ago'){
 }
 ?>
 </div>
-<div class="col-md-4">
+<div class="col-md-5">
 
 <?php
     if (!empty($article)) {
@@ -356,57 +439,85 @@ function timeago($time, $tense='ago'){
 
         ?>
              <p>
-                  <a class="btn btn-outline-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  <a class="btn btn-outline-primary" id="comment_btn_view" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     View comments
                   </a>
                 </p>
                 <div class="collapse mb-5" id="collapseExample">
                   <div class="card card-body">
-
-                    <div class="table-responsive">
-                          <table class="table table-borderless" id="dataTable" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th><small>#</small></th>
-                                    <th><small>Date</small></th>
-                                    <th><small>Name</small></th>
-                                    <th><small>Comments</small></th>
-                                </tr>
-                            </thead>
-                              <tbody>
-                                <?php 
-                                $counter = 0;
-                                foreach($comments as $comment): ?>
-                                  <tr>
-                                    <td><small>
-                                <p class="card-text"><?php echo ++$counter; ?></p></p>
-                            </small></td>
-                                   
-
-                                    <td><small>
-                                <p class="card-text"><?php echo htmlentities($comment['PostingDate']);?></p></p>
-                            </small></td>
-                                   
-                                    <td>
-                                         <small>
-                                <p class="card-text"><?php echo htmlentities($comment['name']);?></p></p>
-                            </small>
-                                    </td>
-
-                                    <td>
-                                       <small>
-                                <p class="card-text "><?php echo htmlentities($comment['comments']);?></p></p>
-                            </small>
-                                    </td>
-                                  </tr>
-
-                                  <?php endforeach; ?>
-                              </tbody>
-                          </table>
-                      </div>
-
                     
-                    <button onclick="myFunction()" id="comment_button" class="btn btn-outline-primary">add comment</button>
+                    <?php foreach($comments as $comment): ?>
+                        <div class="comment mb-2">
+                        <div class="user"><i class="fa fa-user mr-3"></i><small class="font-weight-bold text-dark"><?php echo htmlentities($comment['name']);?></small> <span class="time ml-3 text-gray"><small><?php 
+
+                            //date_default_timezone_set('Africa/Lagos');
+                            $time_posted = $comment['PostingDate'];
+                            $time = date($time_posted); //now
+                            $timeago = timeago($time);
+                            echo $timeago; ?></small></span></div>
+                        <div class="userComment ml-5 mt-2"><small class="text-dark"><?php echo htmlentities($comment['comments']);?></small></div>
+                        <?php
+                            $id_comment = $comment['id'];
+                            // $query=mysqli_query($conn,"SELECT tblcomments.post_id as postid,replies.post_id as repliesPostId,replies.comment_id as rcomment_id from replies join tblcomments on replies.comment_id=tblcomments.id where replies.post_id=$id");
+
+                             $qry = "SELECT tblcomments.post_id as postid,replies.name as rname,replies.replied_on as rdate,replies.reply_comment as rcomment,replies.post_id as repliesPostId,replies.comment_id as rcomment_id from replies join tblcomments on replies.comment_id=tblcomments.id where replies.post_id=$id AND tblcomments.id=$id_comment";
+                             $statement = $connection->prepare($qry);
+                             $statement->execute();
+                             $replies = $statement->fetchAll(PDO::FETCH_ASSOC);
+                             //var_dump($replies);
+                        ?>
+                        <?php foreach($replies as $reply): ?>
+                            <div class="reply mb-2 ml-5 mt-3">
+                            <div class="user"><i class="fa fa-user mr-3"></i><small class="font-weight-bold text-dark"><?php echo htmlentities($reply['rname']);?></small><span class="ml-2"><small>replied</small></span> <span class="time ml-3 text-gray"><small><?php 
+
+                                //date_default_timezone_set('Africa/Lagos');
+                                $time_posted = $reply['rdate'];
+                                $time = date($time_posted); //now
+                                $timeago = timeago($time);
+                                echo $timeago; ?></small></span></div>
+                                <div class="userComment ml-5 mt-2"><small class="text-dark"><?php echo htmlentities($reply['rcomment']);?></small></div>
+                            </div>
+
+                        <?php endforeach; ?>
+
+                        <!-- reply comment begin -->
+                            <a class="btn btn-outline-primary btn-sm ml-5 mt-2 mb-2" data-toggle="collapse" href="#collapse<?php echo htmlentities($comment['id']);?>" role="button" aria-expanded="false" aria-controls="collapseExampl">
+                            reply
+                            </a>
+
+                            <div class="collapse mb-5" id="collapse<?php echo htmlentities($comment['id']);?>">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <form action="article-details.php" method="post">
+                                            <input type="hidden" name="comment_id" class="form-control form-control-sm" value="<?php echo htmlentities($comment['id']);?>">
+                                            <input type="hidden" name="post_id" class="form-control form-control-sm" value="<?php echo htmlentities($id);?>">
+                                            <input type="hidden" name="user_id" class="form-control form-control-sm" value="<?php echo htmlentities($_SESSION['user'] ?? ''); ?>">
+                                        
+                                        <div class="form-group">
+                                            <input type="hidden" name="name" class="form-control" value="<?= $fullname ?? '' ?>">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="hidden" name="email" class="form-control" value="<?= $email ?? '' ?>">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <textarea name="commentbox" class="form-control" placeholder="Your comment"></textarea>
+                                        </div>
+                                        <button class="btn btn-secondary" name="reply_comment" type="submit">Go!</button>
+
+                                        </form>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- reply comment begin -->
+                        
+                        </div>
+                    <?php endforeach; ?>
+                    
+                    <button onclick="commentFunction()" id="comment_button" class="btn btn-outline-primary btn-sm mt-5">Start Discussion</button>
                   </div>
                 </div>
 
@@ -482,6 +593,126 @@ function timeago($time, $tense='ago'){
             }
 
         ?>
+
+<?php
+             if (!empty($article)) {
+                foreach ($article as $art) {
+                    $id = $art->id;
+                    $title = $art->title;
+                    $category = $art->category;
+                    $author = $art->author;
+                    $description = $art->description;
+
+                   
+
+                    $sql_related = 'SELECT * FROM article WHERE title LIKE :title OR author LIKE :author OR description LIKE :description OR category LIKE :category LIMIT 3';
+                    $statement = $connection->prepare($sql_related);
+                    $statement->execute(array(':title' => '%'.$title.'%', ':author' => '%'.$author.'%', ':description' => '%'.$description.'%', ':category' => '%'.$category.'%'));
+                    $related_article = $statement->fetchAll(PDO::FETCH_OBJ);
+                    ?>
+                    <div class="mt-5 mb-4 justify-content-center">
+                        
+                        <p class="text-center">Related Articles</p>
+                    <?php
+                    
+                    foreach ($related_article as $rel){
+                        if ($rel->id != $id) {
+                            $media = $rel->image;
+                            $temp = array();
+                            $media=trim($media, '/,');
+                            $temp   = explode(',', $media);
+                            $temp   = array_filter($temp);
+                            $images = array();
+                            foreach($temp as $image){
+                            $images[]="article_images/".trim( str_replace(array('[',']') ,"" ,$image ) );
+                            }
+
+                            //var_dump($rel->id);
+                            ?>  
+                            
+            <div class="justify-content-center">
+            <div class="card mb-2 text-center" >
+                 <!-- <div class="embed-responsive embed-responsive-4by3"> -->
+                 <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                        <img class="d-block w-100" src="<?php echo $images[0];?>" alt="Card image cap" style=" height: 30vh;">
+                        </div>
+                        <?php
+                            if (sizeof($images) > 1) {
+                                ?>
+                                    <div class="carousel-item">
+                                    <img class="d-block w-100" src="<?php echo $images[1];?>" alt="Card image cap" style=" height: 30vh;">
+                                    </div>
+                                <?php
+                            }
+                        ?>
+
+                        <?php
+                            if (sizeof($images) > 2) {
+                                ?>
+                                    <div class="carousel-item">
+                                    <img class="d-block w-100" src="<?php echo $images[2];?>" alt="Card image cap" style=" height: 30vh;">
+                                    </div>
+                                <?php
+                            }
+                        ?>
+                        
+                        
+                    </div>
+                    </div>
+                     
+                 <!-- </div> -->
+                <div class="card-body text-left">
+                  <h5 class="card-title article"><b><?php echo $rel->title; ?></h5></b>
+                  <p class="card-text"><small><b><?php echo $rel->catchy_phrase; ?>
+                  <p class="card-text"><small><b>Posted by <?php echo $rel->author; ?>, 
+
+                    <?php 
+
+                    //date_default_timezone_set('Africa/Lagos');
+                     $time_posted = $rel->created_on;
+                    $time = date($time_posted); //now
+                    $timeago = timeago($time);
+                    echo $timeago; 
+                    ?>
+                    </b></small>
+
+                    <div class="star-rating">
+                        <span class="fa divya fa-star" data-rating="1" style="font-size:13px;"></span>
+                        <span class="fa fa-star" data-rating="2" style="font-size:13px;"></span>
+                        <span class="fa fa-star" data-rating="3" style="font-size:13px;"></span>
+                        <span class="fa fa-star" data-rating="4" style="font-size:13px;"></span>
+                        <span class="fa fa-star-half" data-rating="5" style="font-size:13px;"></span>
+                        <span class="fa" style="font-size:13px;">4.9</span>
+                        <input type="hidden" name="whatever3" class="rating-value" value="1">
+				    </div>
+                  
+                   <form action="article-details.php"  method="post">
+                    <input type="hidden" name="edit_id" value="<?php echo $rel->id; ?>">
+                      <button type="hidden" name="btn_edit" class="btn btn-sm stretched-link"></button>
+                </form>
+                </div>
+              </div>
+          
+            </div>
+              
+                                
+                            <?php
+                        }
+                    }
+
+                   
+                }
+                
+               ?>  
+               <?php
+            }
+           
+        ?>
+       
+  
+    </div>
       
           
        
@@ -593,9 +824,69 @@ searchButton.addEventListener('click', () => {
 </script>
 
 <script>
-    function myFunction() {
-     document.getElementById("name").focus();
+    function commentFunction() {
+    //  document.getElementById("name").focus();
+     document.getElementById("comment").focus();
 }
+</script>
+
+<script>
+   
+   (function() {
+    const idleDurationSecs = 1800;
+    const redirectUrl = 'logout.php';
+    let idleTimeout;
+
+    const resetIdleTimeout = function() {
+        if(idleTimeout) clearTimeout(idleTimeout);
+        idleTimeout = setTimeout(() => location.href = redirectUrl, idleDurationSecs * 1000);
+    };
+	
+	// Key events for reset time
+    resetIdleTimeout();
+    window.onmousemove = resetIdleTimeout;
+    window.onkeypress = resetIdleTimeout;
+    window.click = resetIdleTimeout;
+    window.onclick = resetIdleTimeout;
+    window.touchstart = resetIdleTimeout;
+    window.onfocus = resetIdleTimeout;
+    window.onchange = resetIdleTimeout;
+    window.onmouseover = resetIdleTimeout;
+    window.onmouseout = resetIdleTimeout;
+    window.onmousemove = resetIdleTimeout;
+    window.onmousedown = resetIdleTimeout;
+    window.onmouseup = resetIdleTimeout;
+    window.onkeypress = resetIdleTimeout;
+    window.onkeydown = resetIdleTimeout;
+    window.onkeyup = resetIdleTimeout;
+    window.onsubmit = resetIdleTimeout;
+    window.onreset = resetIdleTimeout;
+    window.onselect = resetIdleTimeout;
+    window.onscroll = resetIdleTimeout;
+
+})();
+</script>
+
+<script>
+function myFunction() {
+  /* Get the text field */
+  var copyText = document.getElementById("myInput");
+
+   /* Copy the text inside the text field */
+  navigator.clipboard.writeText(copyText.value);
+
+  /* Alert the copied text */
+//   alert("Copied the text: " + copyText.value);
+  alert("Copied successfully!");
+}
+</script>
+<script>
+     function comment_view() {
+    //  document.getElementById("name").focus();
+     document.getElementById("comment_btn_view").click();
+}
+</script>
+
 </script>
 </body>
 </html>

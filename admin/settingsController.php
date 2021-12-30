@@ -10,7 +10,7 @@ require 'vendor/phpmailer/phpmailer/src/SMTP.php';
 require 'vendor/phpmailer/phpmailer/src/Exception.php';
 
 //db connection included
-require 'functions/dbconn.php';
+require '../dbconn.php';
 
 $errors = array();
 $success = array();

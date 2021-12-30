@@ -14,18 +14,42 @@ $(document).ready(function() {
 
 </script>
 
+
 <script>
-   $(document).click(function(){
-        if(typeof timeOutObj != "undefined") {
-            clearTimeout(timeOutObj);
-        }
+   
+   (function() {
+    const idleDurationSecs = 1800;
+    const redirectUrl = 'logout.php';
+    let idleTimeout;
 
-        timeOutObj = setTimeout(function(){ 
-            localStorage.clear();
-            window.location = "../logout.php";
-        }, 1800000);   //will expire after thirty minutes
+    const resetIdleTimeout = function() {
+        if(idleTimeout) clearTimeout(idleTimeout);
+        idleTimeout = setTimeout(() => location.href = redirectUrl, idleDurationSecs * 1000);
+    };
+	
+	// Key events for reset time
+    resetIdleTimeout();
+    window.onmousemove = resetIdleTimeout;
+    window.onkeypress = resetIdleTimeout;
+    window.click = resetIdleTimeout;
+    window.onclick = resetIdleTimeout;
+    window.touchstart = resetIdleTimeout;
+    window.onfocus = resetIdleTimeout;
+    window.onchange = resetIdleTimeout;
+    window.onmouseover = resetIdleTimeout;
+    window.onmouseout = resetIdleTimeout;
+    window.onmousemove = resetIdleTimeout;
+    window.onmousedown = resetIdleTimeout;
+    window.onmouseup = resetIdleTimeout;
+    window.onkeypress = resetIdleTimeout;
+    window.onkeydown = resetIdleTimeout;
+    window.onkeyup = resetIdleTimeout;
+    window.onsubmit = resetIdleTimeout;
+    window.onreset = resetIdleTimeout;
+    window.onselect = resetIdleTimeout;
+    window.onscroll = resetIdleTimeout;
 
-   });
+})();
 </script>
 </body>
 </html>

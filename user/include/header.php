@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = mysqli_connect("localhost", "root", "", "oneupmeta");
+//$conn = mysqli_connect("localhost", "root", "", "oneupmeta");
 
     if(!isset($_SESSION['email'])) {
         header("Location: ../signin.php");

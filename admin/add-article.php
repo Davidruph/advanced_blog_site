@@ -1,9 +1,10 @@
 <?php
+error_reporting(0);
     //All header tag to be included
     include('include/header.php');
     
 //db connection included
-require 'functions/dbconn.php';
+require '../dbconn.php';
 if(isset($_SESSION['email'])) {
     $id = $_SESSION['user'];
 }
@@ -18,6 +19,7 @@ if (isset ($_POST['submit'])){
   $author = $_POST['author'];
   $article_description = $_POST['description'];
   $category = $_POST['category'];
+  $catchy_phrase = $_POST['catchy_phrase'];
   $created_on = date("Y-m-d H:i:s", time());
   $status=1;
   $id = $_SESSION['user'];
@@ -27,27 +29,40 @@ if (isset ($_POST['submit'])){
         $errors['description'] = "All fields are required";
   }else{
 
-  $imgfile = $_FILES["postimage"]["name"];
- 
-  //rename the image file
-  //$imgnewfile = md5($imgfile).$extension;
-  $temp_name = $_FILES['postimage']['tmp_name'];
-  move_uploaded_file($temp_name,"../article_images/".$imgfile);
+  $targetDir = "../article_images/"; 
+  $allowTypes = array('jpg','png','jpeg','gif','JPG', 'JPEG', 'GIF', 'PNG', 'webp'); 
+  $image = $_FILES['postimage']['name'];
 
-  $sql = 'INSERT INTO article(user_id, title, author, description, image, category, created_on, Is_Active) VALUES(:user_id, :title, :author, :description, :imgnewfile, :category, :created_on, :status)';
-  $statement = $connection->prepare($sql);
-
-  if ($statement->execute([':user_id' => $id, ':title' => $article_title, ':author' => $author, ':description' => $article_description, ':category' => $category, ':imgnewfile' => $imgfile, ':created_on' => $created_on, ':status' => $status])) {
-    // Code for move image into directory
-    //move_uploaded_file($temp_name,"article_images/".$imgnewfile);
-    $success['data'] = 'Article created successfully';
-  }else{
-    $errors['data'] = 'Ooops, an error occured';
-  }
+//   $filename = implode(",",$image);
+  if(!empty($image)){ 
+    foreach($_FILES["postimage"]['name'] as $key=>$tmp_name){
+        $file_name=$_FILES["postimage"]["name"][$key];
+        $file_tmp=$_FILES["postimage"]["tmp_name"][$key];
+        $ext=pathinfo($file_name,PATHINFO_EXTENSION);
+        $filename=basename($file_name,$ext);
+        $newFileName=(string)$filename.time().".".$ext;
+        if(in_array($ext, $allowTypes)){ 
+              // Upload file to server 
+            move_uploaded_file($file_tmp=$_FILES["postimage"]["tmp_name"][$key],"../article_images/".$newFileName);
+            $concateFiles .= $comma.$newFileName;
+            $comma = ','; 
+          }else{ 
+            $errors['image'] = "file is not supported";
+          } 
+    }
+    
+      $sql = 'INSERT INTO article(user_id, title, author, catchy_phrase, description, image, category, created_on, Is_Active) VALUES(:user_id, :title, :author, :catchy_phrase, :description, :imgnewfile, :category, :created_on, :status)';
+      $statement = $connection->prepare($sql);
+    
+      if ($statement->execute([':user_id' => $id, ':title' => $article_title, ':author' => $author, ':catchy_phrase' => $catchy_phrase, ':description' => $article_description, ':category' => $category, ':imgnewfile' => $concateFiles, ':created_on' => $created_on, ':status' => $status])) {
+        $success['data'] = 'Article created successfully';
+      }else{
+        $errors['data'] = 'Ooops, an error occured';
+      }
 
  }
  }
-
+}
 ?>
 
 <?php
@@ -82,9 +97,9 @@ if (isset ($_POST['submit'])){
         <div class="col-md-12">
         <form class="form-horizontal" name="recipe-form" method="post" enctype="multipart/form-data">
             <div class="form-group">
-                <label class="col-md-5 control-label">Feature Image/video</label>
+                <label class="col-md-5 control-label">Feature Image</label>
                 <div class="col-md-10">
-                    <input type="file" class="form-control-file" id="postimage" name="postimage"  required>
+                    <input type="file" class="form-control-file" id="postimage" name="postimage[]" multiple required>
                 </div>
             </div>
 
@@ -99,6 +114,13 @@ if (isset ($_POST['submit'])){
                 <label class="col-md-6 control-label">Enter Author name</label>
                 <div class="col-md-10">
                     <input type="text" name="author" id="author" class="form-control" required="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-6 control-label">Enter Catchy Phrase</label>
+                <div class="col-md-10">
+                    <input type="text" name="catchy_phrase" id="catchy_phrase" class="form-control" required="">
                 </div>
             </div>
 

@@ -10,7 +10,7 @@ require 'vendor/phpmailer/phpmailer/src/SMTP.php';
 require 'vendor/phpmailer/phpmailer/src/Exception.php';
 
 //db connection included
-require 'functions/dbconn.php';
+require '../dbconn.php';
 
 $errors = array();
 $success = array();
@@ -110,7 +110,7 @@ if (isset ($_POST['submit'])){
                                         $mail->SMTPSecure = 'ssl'; //tls
                                         $mail->addAddress($email); // Email address where you want to receive emails (you can use any of your gmail address including the gmail address which you used as SMTP server)
                                         $mail->setFrom('oneupmeta.ray@gmail.com', 'Profile Update'); // Gmail address which you used as SMTP server
-                                        $mail->debug = 2;
+                                        //$mail->debug = 2;
                                         $mail->isHTML(true);
                                         $mail->Subject = 'Message Received From (Oneupmeta)';
                                         $mail->Body = "$message";

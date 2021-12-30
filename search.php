@@ -113,7 +113,7 @@ function timeago($time, $tense='ago'){
 <div class="container-fluid bg-warning">
     <div class="row justify-content-center">
         <?php foreach($affiliate as $aff): ?>
-            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn btn-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["link"]; ?></a>
+            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn btn-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["alt"]; ?></a>
         <?php endforeach; ?>
     </div>
 </div>
@@ -271,10 +271,13 @@ function timeago($time, $tense='ago'){
 //if search button is clicked anywhere, select db for a match else echo error
 if(isset($_POST['submit'])) {
 $searchcriteria = $_POST['searchcriteria'];
+
 $sql = 'SELECT * FROM article WHERE title LIKE :searchcriteria OR author LIKE :searchcriteria OR description LIKE :searchcriteria OR category LIKE :searchcriteria';
 $statement = $connection->prepare($sql);
 $statement->execute(array(':searchcriteria' => '%'.$searchcriteria.'%'));
 $article = $statement->fetchAll(PDO::FETCH_OBJ);
+
+
 
 if(sizeof($article) == 0){ 
   echo '<div class="container">
@@ -288,31 +291,51 @@ if(sizeof($article) == 0){
   
     foreach ($article as $art) {
       // if a match is found, foreach of the records print them out with the below template
+      $media = $art->image;
+$temp = array();
+$media=trim($media, '/,');
+$temp   = explode(',', $media);
+$temp   = array_filter($temp);
+$images = array();
+foreach($temp as $image){
+$images[]="article_images/".trim( str_replace(array('[',']') ,"" ,$image ) );
+}
  ?>
 
 <div class="col-lg-3" id="blogs">
     <div class="card-deck h-100">
         <div class="card row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-            <div class="embed-responsive embed-responsive-16by9">
-            <?php
-                        $media = $art->image;
-                        $video_format = array(".avi", ".giv", ".mp4", ".mov", ".AVI", ".GIV", ".MP4", ".MOV");
-                        if(in_array($media, $video_format)) {
-                            ?>
-                            <video class="card-img-top embed-responsive-item" autoplay controls> <source src='article_images/<?php echo $art->image ?>' type='video/mp4'> </video>"
-                            <?php
-                       }else {
-                           ?>
-                           <img class="card-img-top embed-responsive-item" src="article_images/<?php echo $art->image ?>" alt="Card image cap">
+        <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                        <img class="d-block w-100" src="<?php echo $images[0];?>" alt="Card image cap" style=" height: 30vh;">
+                        </div>
+                        <?php
+                            if (sizeof($images) > 1) {
+                                ?>
+                                    <div class="carousel-item">
+                                    <img class="d-block w-100" src="<?php echo $images[1];?>" alt="Card image cap" style=" height: 30vh;">
+                                    </div>
+                                <?php
+                            }
+                        ?>
 
-                            <?php
-                       }
-
-                     ?>
-                
-            </div>
+                        <?php
+                            if (sizeof($images) > 2) {
+                                ?>
+                                    <div class="carousel-item">
+                                    <img class="d-block w-100" src="<?php echo $images[2];?>" alt="Card image cap" style=" height: 30vh;">
+                                    </div>
+                                <?php
+                            }
+                        ?>
+                        
+                        
+                    </div>
+                    </div>
         <div class="card-body text-justify">
             <h5 class="card-title article"><b><?php echo $art->title ?></h5></b>
+            <p class="card-text"><small><b><?php echo $art->catchy_phrase ?>
             <p class="card-text"><small><b>Posted by <?php echo $art->author ?>, 
 
             <?php 
@@ -441,7 +464,7 @@ if(sizeof($article) == 0){
 <div class="container-fluid bg-dark">
     <div class="row justify-content-center">
         <?php foreach($affiliate as $aff): ?>
-            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn bg-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["link"]; ?></a>
+            <a href="<?php echo $aff["link"]; ?>" target = "_blank" class="btn bg-dark btn-sm text-white mr-2 mt-2 mb-2" alt="<?php echo $aff["alt"]; ?>"><?php echo $aff["alt"]; ?></a>
         <?php endforeach; ?>
     </div>
 </div>
@@ -457,18 +480,42 @@ searchButton.addEventListener('click', () => {
 });
 </script>
 
+
 <script>
-   $(document).click(function(){
-        if(typeof timeOutObj != "undefined") {
-            clearTimeout(timeOutObj);
-        }
+   
+   (function() {
+    const idleDurationSecs = 1800;
+    const redirectUrl = 'logout.php';
+    let idleTimeout;
 
-        timeOutObj = setTimeout(function(){ 
-            localStorage.clear();
-            window.location = "/logout.php";
-        }, 1800000);   //will expire after thirty minutes
+    const resetIdleTimeout = function() {
+        if(idleTimeout) clearTimeout(idleTimeout);
+        idleTimeout = setTimeout(() => location.href = redirectUrl, idleDurationSecs * 1000);
+    };
+	
+	// Key events for reset time
+    resetIdleTimeout();
+    window.onmousemove = resetIdleTimeout;
+    window.onkeypress = resetIdleTimeout;
+    window.click = resetIdleTimeout;
+    window.onclick = resetIdleTimeout;
+    window.touchstart = resetIdleTimeout;
+    window.onfocus = resetIdleTimeout;
+    window.onchange = resetIdleTimeout;
+    window.onmouseover = resetIdleTimeout;
+    window.onmouseout = resetIdleTimeout;
+    window.onmousemove = resetIdleTimeout;
+    window.onmousedown = resetIdleTimeout;
+    window.onmouseup = resetIdleTimeout;
+    window.onkeypress = resetIdleTimeout;
+    window.onkeydown = resetIdleTimeout;
+    window.onkeyup = resetIdleTimeout;
+    window.onsubmit = resetIdleTimeout;
+    window.onreset = resetIdleTimeout;
+    window.onselect = resetIdleTimeout;
+    window.onscroll = resetIdleTimeout;
 
-   });
+})();
 </script>
 </body>
 </html>

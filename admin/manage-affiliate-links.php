@@ -2,7 +2,7 @@
 <?php
 
 //db connection
-require 'functions/dbconn.php';
+require '../dbconn.php';
 $errors = array();
 $success = array();
 //fetch affiliate

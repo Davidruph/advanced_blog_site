@@ -1,6 +1,6 @@
 <?php
 //db connection included
-require 'functions/dbconn.php';
+require '../dbconn.php';
 
 $errors = array();
 $success = array();
@@ -13,7 +13,7 @@ if (isset ($_POST['btnupdate'])){
   $sql = 'UPDATE subcategory SET subcategory=:subcategory, Is_Active=:status, created_on=:created_on WHERE id=:id';
   $statement = $connection->prepare($sql);
   if ($statement->execute([':subcategory' => $subcategory, ':status' => $status, ':created_on' => $created_on, ':id' => $id])) {
-    $success['data'] = "subcategory updated successfully <a href='manage-categories.php'>Go Back</a>";
+    $success['data'] = "subcategory updated successfully <a href='manage-subcategories.php'>Go Back</a>";
   }else{
     $errors['data'] = 'Ooops, an error occured';
   }

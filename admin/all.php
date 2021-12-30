@@ -1,5 +1,5 @@
 <?php
-require 'functions/dbconn.php';
+require '../dbconn.php';
 
 $sql = 'SELECT email FROM subscribers';
 // $statement = $connection->prepare($sql);

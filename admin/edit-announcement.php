@@ -1,6 +1,6 @@
 <?php
 //db connection included
-require 'functions/dbconn.php';
+require '../dbconn.php';
 
 $errors = array();
 $success = array();
@@ -78,7 +78,7 @@ if (isset ($_POST['btnupdate'])){
                       </div>
                   </div>
                     
-                    <a href="manage-categories.php" class="btn btn-danger">Cancel</a>
+                    <a href="manage-announcements.php" class="btn btn-danger">Cancel</a>
                     <button type="submit" name="btnupdate" class="btn btn-primary">Update</button>
                     
                    </form>

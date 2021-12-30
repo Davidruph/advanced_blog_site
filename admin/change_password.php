@@ -14,7 +14,7 @@ require 'vendor/phpmailer/phpmailer/src/Exception.php';
 ?>
 
 <?php
-require 'functions/dbconn.php';
+require '../dbconn.php';
 
 $errors = array();
 $success = array();

@@ -1,7 +1,7 @@
 <?php
 
 //db connection
-require 'functions/dbconn.php';
+require '../dbconn.php';
 
 //fetch mail
 $sql = 'SELECT * FROM tblmail';

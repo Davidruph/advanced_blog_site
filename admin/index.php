@@ -1,6 +1,6 @@
 
 <?php
-    require 'functions/dbconn.php';
+    require '../dbconn.php';
 
     //All header tag to be included
     include('include/header.php');
@@ -21,7 +21,33 @@
 
     <div class="col-xl-3 col-md-6 mb-4">
       <div class="card border-left-success shadow h-100 py-2">
-        <a href="#!" style="text-decoration: none;">
+        <a href="manage-article.php" style="text-decoration: none;">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">no. of live articles</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800 text-dark">
+                <?php
+                   $count=$connection->prepare("SELECT * FROM article WHERE Is_Active = 1");
+                        $count->execute();
+                        $article=$count->rowCount();
+                        echo $article; 
+                ?>
+
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-newspaper fa-2x text-green-300 text-dark"></i>
+            </div>
+          </div>
+        </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow h-100 py-2">
+        <a href="manage-users.php" style="text-decoration: none;">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">

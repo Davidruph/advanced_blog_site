@@ -4,6 +4,7 @@ $errors = array();
 $success = array();
 require 'dbconn.php';
 
+//if email session is set
 if(isset($_SESSION['email'])) {
     $email = $_SESSION['email'];
 }
@@ -11,11 +12,11 @@ if(isset($_SESSION['email'])) {
 ?>
 
 <?php
+//if reset_code variable is available in the url
 if (isset($_GET['reset_code'])) {
     $code = $_GET['reset_code'];
 }
 
- 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         $password = $_POST['password'];
         $confirm = $_POST['confirm_password'];

@@ -1,6 +1,6 @@
 
 <?php
-    require 'functions/dbconn.php';
+    require '../dbconn.php';
 
     //All header tag to be included
     include('include/header.php');
