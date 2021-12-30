@@ -6,7 +6,8 @@
 	require 'dbconn.php';
 
 	//get user id from logged in session
-	$id = $_SESSION['user'];
+		//session variables for default login
+   		$id = $_SESSION['user'] ?? '0'; 
 	$log_date_time = date("Y-m-d H:i:s", time());
 	$status = "Out";
 

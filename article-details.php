@@ -915,7 +915,6 @@ if (!url) {url = window.location}
 
 })();
 </script>
-</script>
 <script>
 function myFunction() {
   /* Get the text field */

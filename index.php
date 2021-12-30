@@ -533,6 +533,5 @@ searchButton.addEventListener('click', () => {
 
 })();
 </script>
-</script>
 </body>
 </html>
